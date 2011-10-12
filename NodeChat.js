@@ -36,4 +36,13 @@ var socket = io.listen(webServ);
 
 socket.sockets.on('connection', function(client){
 	console.log("connection works!");
+
+
+	client.on('data', function(data){
+		console.log(data);
+	    });
+	
+
     });
+
+
