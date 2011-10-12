@@ -8,7 +8,7 @@ function checkForSend(input, event){
 
     if(event.keyCode == 13){
         var sendString = input.id + " " + nick  + " " +  msg;
-        socket.send(sendString);
+        socket.emit('data', sendString);
         input.value = null;
     }
 
