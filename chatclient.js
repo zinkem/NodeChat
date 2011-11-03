@@ -1,5 +1,5 @@
 var socket;
-var domain = 'cavehacker.com';
+var domain = document.location.href;
 
 //this is called every time the user presses a key in the chat box input line
 function checkForSend(input, event){
@@ -84,7 +84,7 @@ function beginChat(socket){
 
 function init(){
 
-    socket = new io.connect('http://localhost');
+    socket = new io.connect(domain);
 
     socket.emit('data', 'data bruhaha!');
 
