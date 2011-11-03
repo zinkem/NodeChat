@@ -1,13 +1,14 @@
 var socket;
 var domain = 'cavehacker.com';
 
+//this is called every time the user presses a key in the chat box input line
 function checkForSend(input, event){
     var msg = input.value;
     var len = msg.length;
     var nick = document.getElementById('nickField').value;
 
     if(event.keyCode == 13){
-        var sendString = input.id + " " + nick  + " " +  msg;
+        var sendString = "fakeuserid" + PRIVMSG + input.id + " " + nick  + " " +  msg;
         socket.emit('data', sendString);
         input.value = null;
     }

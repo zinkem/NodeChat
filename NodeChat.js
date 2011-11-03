@@ -34,12 +34,37 @@ webServ.listen(8000);
 
 var socket = io.listen(webServ);
 
+var privmsg = function() {
+};
+
+var nocommand = function(){
+};
+
 socket.sockets.on('connection', function(client){
 	console.log("connection works!");
 
 
 	client.on('data', function(data){
-		console.log(data);
+	
+		var words = data.splice(' ');
+		
+		switch(words[1]){
+		case "PRIVMSG":
+		    privmsg();
+		case "WHO":
+		case "NICK":
+		case "JOIN":
+		case "PART":
+		case "MODE":
+		case "TOPIC":
+		case "LIST":
+		case "INVITE":
+		case "KICK":
+		case "BAN":
+		default:
+		    nocommand();
+		}
+	
 	    });
 	
 
