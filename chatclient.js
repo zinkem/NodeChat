@@ -12,7 +12,6 @@ function checkForSend(input, event){
         input.value = null;
     }
 
-
 }
 
 var linesToDisplay = 14;
