@@ -8,7 +8,7 @@ function checkForSend(input, event){
     var nick = document.getElementById('nickField').value;
 
     if(event.keyCode == 13){
-        var sendString = "fakeuserid" + PRIVMSG + input.id + " " + nick  + " " +  msg;
+        var sendString = "fakeuserid" + " PRIVMSG " + input.id + " " + nick  + " " +  msg;
         socket.emit('data', sendString);
         input.value = null;
     }

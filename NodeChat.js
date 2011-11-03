@@ -35,9 +35,11 @@ webServ.listen(8000);
 var socket = io.listen(webServ);
 
 var privmsg = function() {
+    console.log("PRIVATE MESSAGE!!");
 };
 
 var nocommand = function(){
+    console.log("Not a recognized command");
 };
 
 socket.sockets.on('connection', function(client){
@@ -46,7 +48,7 @@ socket.sockets.on('connection', function(client){
 
 	client.on('data', function(data){
 	
-		var words = data.splice(' ');
+		var words = data.split(' ');
 		
 		switch(words[1]){
 		case "PRIVMSG":
