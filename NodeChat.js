@@ -44,15 +44,20 @@ var nocommand = function(){
 
 socket.sockets.on('connection', function(client){
 	console.log("connection works!");
-
+	
 
 	client.on('data', function(data){
 	
 		var words = data.split(' ');
 		
 		switch(words[1]){
+		case "INIT":
+		    //var ip = new java.net.InetAddress.getLocalHost(); //'<!--#echo var="REMOTE_ADDR"-->';
+		    //console.log("INIT connection with client: "+ip);
+		    break;
 		case "PRIVMSG":
 		    privmsg();
+		    break;
 		case "WHO":
 		case "NICK":
 		case "JOIN":
