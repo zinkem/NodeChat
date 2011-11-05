@@ -44,7 +44,7 @@ var nocommand = function(){
 
 socket.sockets.on('connection', function(client){
 	console.log("connection works!");
-	
+	var address = client.handshake.address; // Get client ip address and port.
 
 	client.on('data', function(data){
 	
@@ -52,8 +52,9 @@ socket.sockets.on('connection', function(client){
 		
 		switch(words[1]){
 		case "INIT":
-		    //var ip = new java.net.InetAddress.getLocalHost(); //'<!--#echo var="REMOTE_ADDR"-->';
-		    //console.log("INIT connection with client: "+ip);
+		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
+		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
+		    client.emit('INIT', uid); // Assign and send unique user id to client for identification later.
 		    break;
 		case "PRIVMSG":
 		    privmsg();

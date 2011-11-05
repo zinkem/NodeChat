@@ -60,10 +60,13 @@ function beginChat(socket){
     //showChat('zinkem');
     //showChat('kali');
 
+    socket.on('INIT', function(data){
+	    console.log("Client side INIT "+ data);
+	});
 
     socket.on('message', function(data){
 
-            var a = data.indexOf(' ');
+	    var a = data.indexOf(' ');
             var chan = data.slice(0, a);
             var chan_name = data.slice(1, a);
             var content = data.slice(a);
@@ -77,7 +80,7 @@ function beginChat(socket){
 
             var chatboxchildren = chatbox.children;
             if(chatboxchildren.length > linesToDisplay+2)
-		chatbox.removeChild(chatboxchildren.item(1));
+	    chatbox.removeChild(chatboxchildren.item(1));
         });
 }
 
