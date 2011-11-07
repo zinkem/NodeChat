@@ -42,9 +42,15 @@ var nocommand = function(){
     console.log("Not a recognized command");
 };
 
+var clients = [];
+
+
 socket.sockets.on('connection', function(client){
 	console.log("connection works!");
 	var address = client.handshake.address; // Get client ip address and port.
+
+	client.send('#cs455 fff ffff ffffsdsd');
+	clients.push(client);
 
 	client.on('data', function(data){
 	
@@ -54,7 +60,7 @@ socket.sockets.on('connection', function(client){
 		case "INIT":
 		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
 		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
-		    client.emit('INIT', uid); // Assign and send unique user id to client for identification later.
+		    client.send('#cs455 ' + uid); // Assign and send unique user id to client for identification later.
 		    break;
 		case "PRIVMSG":
 		    privmsg();

@@ -66,6 +66,8 @@ function beginChat(socket){
 
     socket.on('message', function(data){
 
+	    console.log('message: ' + data);
+
 	    var a = data.indexOf(' ');
             var chan = data.slice(0, a);
             var chan_name = data.slice(1, a);
