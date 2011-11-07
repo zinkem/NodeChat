@@ -50,6 +50,7 @@ socket.sockets.on('connection', function(client){
 	var address = client.handshake.address; // Get client ip address and port.
 
 	client.send('#cs455 fff ffff ffffsdsd');
+	client.emit('INIT', 'some message');
 	clients.push(client);
 
 	client.on('data', function(data){
