@@ -1,16 +1,26 @@
 var socket;
 var domain = document.location.href;
 
+var currentnick;
+
 //this is called every time the user presses a key in the chat box input line
 function checkForSend(input, event){
     var msg = input.value;
     var len = msg.length;
     var nick = document.getElementById('nickField').value;
+    var sendString;
 
     if(event.keyCode == 13){
-        var sendString = "fakeuserid" + " PRIVMSG " + input.id + " " + nick  + " " +  msg;
+	
+	if(currentnick != nick){
+	    sendString = currentnick + " NICK " + nick;
+	    currentnick = nick;
+	} else {
+	    sendString = nick + " PRIVMSG " + input.id + " " + nick  + " " +  msg;
+	    input.value = null;
+	}
         socket.emit('data', sendString);
-        input.value = null;
+
     }
 
 }
@@ -52,8 +62,9 @@ function beginChat(socket){
     //document.body = document.createElement("body");                                                               
 
     var nameField = document.createElement("input");
-    nameField.value = "guest";
+    nameField.value = currentnick = "guest";
     nameField.id = "nickField";
+    nameField.setAttribute("onKeyPress", "checkForSend(this, event)");
     document.body.appendChild(nameField);
 
     showChat('cs455');

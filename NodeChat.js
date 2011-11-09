@@ -31,6 +31,17 @@ webServ = http.createServer(function(req, res){
 
 webServ.listen(8000);
 
+var clients = [];
+function userData(ip, socket) {
+    this.socket = socket;
+    this.nick = "";
+    this.uid = ip;
+    this.ip = ip;
+    this.channels = {};
+}
+
+function chanData() {
+}
 
 var socket = io.listen(webServ);
 
@@ -38,20 +49,27 @@ var privmsg = function() {
     console.log("PRIVATE MESSAGE!!");
 };
 
+var who = function(){
+    console.log("WHO!");
+}
+
+var nick = function(userdata, nick){
+
+    console.log(userdata.nick + " nick changed to " + nick);
+    userdata.nick = nick;
+}
+
 var nocommand = function(){
     console.log("Not a recognized command");
 };
-
-var clients = [];
 
 
 socket.sockets.on('connection', function(client){
 	console.log("connection works!");
 	var address = client.handshake.address; // Get client ip address and port.
+	var thisuser = new userData(address.address, client);
 
-	client.send('#cs455 fff ffff ffffsdsd');
-	client.emit('INIT', 'some message');
-	clients.push(client);
+	clients.push(thisuser);
 
 	client.on('data', function(data){
 	
@@ -67,7 +85,11 @@ socket.sockets.on('connection', function(client){
 		    privmsg();
 		    break;
 		case "WHO":
+		    who();
+		    break;
 		case "NICK":
+		    nick(thisuser, words[2]);
+		    break;
 		case "JOIN":
 		case "PART":
 		case "MODE":
