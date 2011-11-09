@@ -37,7 +37,7 @@ function showChat(room){
     
     for(i = lines.length - linesToDisplay; i < lines.length; i++){
 	if(i < 0 )
-	    chatText += "<div>! </div>"
+	    chatText += "<div>&nbsp;</div>"
 	    else
 		chatText += "<div>"+lines[i] + "</div>";
 	
