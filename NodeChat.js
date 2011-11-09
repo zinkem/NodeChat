@@ -37,13 +37,17 @@ function userData(ip, socket) {
     this.nick = "";
     this.uid = ip;
     this.ip = ip;
-    this.channels = {};
+    this.channels = [];
 }
 
 function chanData() {
 }
 
 var socket = io.listen(webServ);
+
+var user = function(params) {
+    console.log(params);
+};
 
 var privmsg = function() {
     console.log("PRIVATE MESSAGE!!");
@@ -59,8 +63,8 @@ var nick = function(userdata, nick){
     userdata.nick = nick;
 }
 
-var nocommand = function(){
-    console.log("Not a recognized command");
+var nocommand = function(com){
+    console.log(com + ": not a recognized command");
 };
 
 
@@ -73,13 +77,21 @@ socket.sockets.on('connection', function(client){
 
 	client.on('data', function(data){
 	
-		var words = data.split(' ');
+		var a = data.indexOf(' ');
+		var currentuid = data.slice(0, a);
+		var fullcommand = data.slice(a+1, data.length);
+		a = data.indexOf(' ');
+		var comtype = fullcommand.slice(0, a-1);
+		var params = fullcommand.slice(a, fullcommand.length);
 		
-		switch(words[1]){
+		switch(comtype){
 		case "INIT":
 		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
 		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
 		    client.send('#cs455 ' + uid); // Assign and send unique user id to client for identification later.
+		    break;
+		case "USER":
+		    user(thisuser, params);
 		    break;
 		case "PRIVMSG":
 		    privmsg();
@@ -88,7 +100,7 @@ socket.sockets.on('connection', function(client){
 		    who();
 		    break;
 		case "NICK":
-		    nick(thisuser, words[2]);
+		    nick(thisuser, params);
 		    break;
 		case "JOIN":
 		case "PART":
@@ -99,7 +111,7 @@ socket.sockets.on('connection', function(client){
 		case "KICK":
 		case "BAN":
 		default:
-		    nocommand();
+		    nocommand(comtype);
 		}
 	
 	    });
