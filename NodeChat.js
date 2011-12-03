@@ -76,9 +76,22 @@ var privmsg = function() {
     console.log("PRIVATE MESSAGE!!");
 };
 
-var who = function(params) {
+var who = function(thisuser, params) {
     console.log("WHO!");
-}
+    var name = "";
+    if (params == "" || params == "0") {
+        var pattern = new RegExp(".*");
+    } else {
+        var pattern = new RegExp(params);
+    }
+    for(var i = 0; i < clients.length; i++) {
+        name = clients[i].nick;
+        if (name.match(pattern)) {
+            console.log(name);
+            thisuser.socket.emit(name + '\n');
+        }
+    }
+};
 
 var nick = function(userdata, nick){
     console.log(userdata.nick + " nick changed to " + nick);
@@ -127,6 +140,7 @@ socket.sockets.on('connection', function(client){
 
 		switch(comtype){
 
+
 			case "INIT":
 				console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
 				var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
@@ -139,7 +153,7 @@ socket.sockets.on('connection', function(client){
 				privmsg();
 				break;
 			case "WHO":
-				who(params);
+				who(thisuser, params);
 				break;
 			case "NICK":
 				nick(thisuser, params);
@@ -157,6 +171,7 @@ socket.sockets.on('connection', function(client){
 			default:
 				nocommand(comtype);
 			}
+
 	
 	    });
 	
