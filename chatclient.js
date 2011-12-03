@@ -19,7 +19,7 @@ function checkForSend(input, event){
 			msg = msg.slice(1); // remove the forward slash.
 			var command = msg.match(/[A-Za-z]*/i); // capture all chars until we hit non-alphabetic char.
 			input.value = command;// debugging.
-			// command = command.toUpperCase(); <-----hangs at this statement, also hangs using .toLowerCase()...why?
+			command = command[0].toUpperCase();// <-----hangs at this statement, also hangs using .toLowerCase()...why?
 			switch(command){
 				case "USER":
 					sendString = nick + " USER testing user";
