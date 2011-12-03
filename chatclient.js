@@ -5,20 +5,53 @@ var currentnick;
 
 //this is called every time the user presses a key in the chat box input line
 function checkForSend(input, event){
-    var msg = input.value;
-    var len = msg.length;
-    var nick = document.getElementById('nickField').value;
-    var sendString;
 
+	// Only if the user hit enter we do:
     if(event.keyCode == 13){
-	
-	if(currentnick != nick){
-	    sendString = currentnick + " NICK " + nick;
-	    currentnick = nick;
-	} else {
-	    sendString = nick + " PRIVMSG " + input.id + " " + nick  + " " +  msg;
-	    input.value = null;
-	}
+
+		var msg = input.value;
+		var len = msg.length;
+		var nick = document.getElementById('nickField').value;
+		var sendString;
+
+		// Forward slash "/" denotes that the user is specifying a command.
+		if(msg[0] == '/'){
+			msg = msg.slice(1); // remove the forward slash.
+			var command = msg.match(/[A-Za-z]*/i); // capture all chars until we hit non-alphabetic char.
+			input.value = msg;// debugging.
+			command = command[0].toUpperCase();// <-----hangs at this statement, also hangs using .toLowerCase()...why?
+			switch(command){
+				case "USER":
+					sendString = nick + " USER testing user";
+					break;
+				case "WHO":
+					sendString = nick + " WHO ";
+					break;
+				case "NICK":
+					sendString = nick + " NICK ";
+					break;
+				case "JOIN":
+					sendString = nick + " JOIN ";
+					break;
+				case "PART":
+				case "MODE":
+				case "TOPIC":
+				case "LIST":
+				case "INVITE":
+				case "KICK":
+				case "BAN":
+				default:
+					// Not a recognized command!
+					sendString = nick + " "+command+" " + nick; // for debugging.
+			}
+			//input.value = null;
+		} else if(currentnick != nick){
+			sendString = currentnick + " NICK " + nick;
+			currentnick = nick;
+		} else {
+			sendString = nick + " PRIVMSG " + input.id + " " + nick  + " " +  msg;
+			input.value = null;
+		}
         socket.emit('data', sendString);
 
     }
@@ -28,19 +61,15 @@ function checkForSend(input, event){
 var linesToDisplay = 14;
 function showChat(room){
 
-    var txtFile = new XMLHttpRequest();
+    //var txtFile = new XMLHttpRequest();
 
-    var lines = txtFile.responseText.split("\n");
+    var lines = [];// = txtFile.responseText.split("\n");
     var i;
     var newDiv = document.createElement("div");
     var chatText = '<h1>#' + room + '</h1>';
     
-    for(i = lines.length - linesToDisplay; i < lines.length; i++){
-	if(i < 0 )
-	    chatText += "<div>&nbsp;</div>"
-	    else
-		chatText += "<div>"+lines[i] + "</div>";
-	
+    for(i = 0; i < linesToDisplay; i++){
+    	chatText += "<div>&nbsp;</div>"
     }
     
     newDiv.id = room;
@@ -62,7 +91,7 @@ function beginChat(socket){
     //document.body = document.createElement("body");                                                               
 
     var nameField = document.createElement("input");
-    nameField.value = currentnick = "guest";
+    nameField.value = currentnick = "guest"; // Default user name.
     nameField.id = "nickField";
     nameField.setAttribute("onKeyPress", "checkForSend(this, event)");
     document.body.appendChild(nameField);
@@ -77,9 +106,9 @@ function beginChat(socket){
 
     socket.on('message', function(data){
 
-	    console.log('message: ' + data);
+	    	console.log('message: ' + data);
 
-	    var a = data.indexOf(' ');
+	   		var a = data.indexOf(' ');
             var chan = data.slice(0, a);
             var chan_name = data.slice(1, a);
             var content = data.slice(a);
@@ -93,8 +122,8 @@ function beginChat(socket){
 
             var chatboxchildren = chatbox.children;
             if(chatboxchildren.length > linesToDisplay+2)
-	    chatbox.removeChild(chatboxchildren.item(1));
-        });
+	    	chatbox.removeChild(chatboxchildren.item(1));
+		});
 }
 
 

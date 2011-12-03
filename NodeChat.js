@@ -47,7 +47,7 @@ function chanData() {
 var socket = io.listen(webServ);
 
 var user = function(params) {
-    console.log(params);
+    console.log("USER!");
 };
 
 var privmsg = function() {
@@ -77,15 +77,19 @@ socket.sockets.on('connection', function(client){
 	clients.push(thisuser);
 
 	client.on('data', function(data){
-	
+		console.log(data);
+		
 		var a = data.indexOf(' ');
 		var currentuid = data.slice(0, a);
 		var fullcommand = data.slice(a+1, data.length);
-		a = data.indexOf(' ');
-		var comtype = fullcommand.slice(0, a-1);
-		var params = fullcommand.slice(a, fullcommand.length);
+		a = fullcommand.indexOf(' '); // find index of next space.
+		var comtype = fullcommand.slice(0, a);
+		var params = fullcommand.slice(a+1, fullcommand.length);
 		
+		console.log(fullcommand);
+
 		switch(comtype){
+
 		case "INIT":
 		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
 		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
