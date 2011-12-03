@@ -44,6 +44,26 @@ var channels = [];
 function chanData() {
     this.name = "";
     this.users = [];
+	this.mode = new channelModeData();
+}
+
+function channelModeData(){
+	this.operator;
+	this.private_chan;
+	this.secret_chan;
+	this.invite_only_chan;
+	this.topic_mod_by_op_only;
+	this.no_mes_from_outsiders;
+	this.moderated_chan; 
+	this.user_limit; //integer.
+	this.ban_mask; //array of nicks.
+	this.open_floor_chan;
+	this.key;
+}
+
+function userModeData(){
+	this.invisible;
+	this.operator;
 }
 
 var socket = io.listen(webServ);
@@ -61,10 +81,25 @@ var who = function(params) {
 }
 
 var nick = function(userdata, nick){
-
     console.log(userdata.nick + " nick changed to " + nick);
     userdata.nick = nick;
 }
+
+var userMode = function(params){
+	
+};
+
+var chanMode = function(params){
+
+};
+
+var mode = function(params){
+	if(params[0] === '#'){
+		chanMode(params);
+	} else {
+		userMode(params);
+	}
+};
 
 var nocommand = function(com){
     console.log(com + ": not a recognized command");
@@ -92,35 +127,36 @@ socket.sockets.on('connection', function(client){
 
 		switch(comtype){
 
-		case "INIT":
-		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
-		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
-		    client.send('#cs455 ' + uid); // Assign and send unique user id to client for identification later.
-		    break;
-		case "USER":
-		    user(thisuser, params);
-			//wow this is cool.
-		    break;
-		case "PRIVMSG":
-		    privmsg();
-		    break;
-		case "WHO":
-		    who(params);
-		    break;
-		case "NICK":
-		    nick(thisuser, params);
-		    break;
-		case "JOIN":
-		case "PART":
-		case "MODE":
-		case "TOPIC":
-		case "LIST":
-		case "INVITE":
-		case "KICK":
-		case "QUIT":
-		default:
-		    nocommand(comtype);
-		}
+			case "INIT":
+				console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
+				var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
+				client.send('#cs455 ' + uid); // Assign and send unique user id to client for identification later.
+				break;
+			case "USER":
+				user(thisuser, params);
+				break;
+			case "PRIVMSG":
+				privmsg();
+				break;
+			case "WHO":
+				who(params);
+				break;
+			case "NICK":
+				nick(thisuser, params);
+				break;
+			case "JOIN":
+			case "PART":
+			case "MODE":
+				mode(params);
+				break;
+			case "TOPIC":
+			case "LIST":
+			case "INVITE":
+			case "KICK":
+			case "QUIT":
+			default:
+				nocommand(comtype);
+			}
 	
 	    });
 	
