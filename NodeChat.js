@@ -54,7 +54,7 @@ var privmsg = function() {
     console.log("PRIVATE MESSAGE!!");
 };
 
-var who = function(){
+var who = function(params) {
     console.log("WHO!");
 }
 
@@ -102,7 +102,7 @@ socket.sockets.on('connection', function(client){
 		    privmsg();
 		    break;
 		case "WHO":
-		    who();
+		    who(params);
 		    break;
 		case "NICK":
 		    nick(thisuser, params);
