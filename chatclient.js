@@ -5,20 +5,51 @@ var currentnick;
 
 //this is called every time the user presses a key in the chat box input line
 function checkForSend(input, event){
-    var msg = input.value;
-    var len = msg.length;
-    var nick = document.getElementById('nickField').value;
-    var sendString;
 
+	// Only if the user hit enter we do:
     if(event.keyCode == 13){
-	
-	if(currentnick != nick){
-	    sendString = currentnick + " NICK " + nick;
-	    currentnick = nick;
-	} else {
-	    sendString = nick + " PRIVMSG " + input.id + " " + nick  + " " +  msg;
-	    input.value = null;
-	}
+
+		var msg = input.value;
+		var len = msg.length;
+		var nick = document.getElementById('nickField').value;
+		var sendString;
+
+		// Forward slash "/" denotes that the user is specifying a command.
+		if(msg[0] == '/'){
+			var command = msg.slice(1); // remove the forward slash.
+			//command = command.match(/\/([A-Za-z]*)/i); // capture all chars until we hit non-alphabetic char. 
+			switch(command.toUpperCase()){
+				case "USER":
+					sendString = nick + " USER testing user";
+					break;
+				case "WHO":
+					// create send string
+					break;
+				case "NICK":
+					// create send string
+					break;
+				case "JOIN":
+					sendString = nick + " JOIN ";
+					break;
+				case "PART":
+				case "MODE":
+				case "TOPIC":
+				case "LIST":
+				case "INVITE":
+				case "KICK":
+				case "BAN":
+				default:
+					// Not a recognized command!
+					sendString = nick + " crap " + nick;
+			}
+			input.value = null;
+		} else if(currentnick != nick){
+			sendString = currentnick + " NICK " + nick;
+			currentnick = nick;
+		} else {
+			sendString = nick + " PRIVMSG " + input.id + " " + nick  + " " +  msg;
+			input.value = null;
+		}
         socket.emit('data', sendString);
 
     }
@@ -36,11 +67,11 @@ function showChat(room){
     var chatText = '<h1>#' + room + '</h1>';
     
     for(i = lines.length - linesToDisplay; i < lines.length; i++){
-	if(i < 0 )
-	    chatText += "<div>&nbsp;</div>"
-	    else
-		chatText += "<div>"+lines[i] + "</div>";
-	
+		if(i < 0 ){
+	    	chatText += "<div>&nbsp;</div>"
+		} else {
+			chatText += "<div>"+lines[i] + "</div>";
+		}
     }
     
     newDiv.id = room;
@@ -62,7 +93,7 @@ function beginChat(socket){
     //document.body = document.createElement("body");                                                               
 
     var nameField = document.createElement("input");
-    nameField.value = currentnick = "guest";
+    nameField.value = currentnick = "guest"; // Default user name.
     nameField.id = "nickField";
     nameField.setAttribute("onKeyPress", "checkForSend(this, event)");
     document.body.appendChild(nameField);
