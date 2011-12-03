@@ -90,6 +90,9 @@ var joinchan = function(userdata, params){
 
 };
 
+var quit = function(userdata, params){
+};
+
 var nocommand = function(com){
     console.log(com + ": not a recognized command");
 };
