@@ -52,19 +52,43 @@ var user = function(params) {
     console.log("USER!");
 };
 
-var privmsg = function() {
+var privmsg = function(user, params) {
     console.log("PRIVATE MESSAGE!!");
+    console.log(user);
+    console.log(params);
+
+    var channel = params.split(' ')[0];
+    var dest = channels[channel].users 
+    var sendmsg = ":" + user.nick + " PRIVMSG " + params;
+    console.log(sendmsg);
+
+    for(i = 0; i < dest.length; i++){
+	dest[i].socket.emit(sendmsg);
+    }
+
 };
 
 var who = function(params) {
     console.log("WHO!");
-}
-
+};
+    
 var nick = function(userdata, nick){
 
     console.log(userdata.nick + " nick changed to " + nick);
     userdata.nick = nick;
-}
+};
+
+var joinchan = function(userdata, params){
+    chan = params.split(' ')[0];
+
+    if(!channels[chan]){
+	channels[chan] = new chanData();
+	channels[chan].name = chan;
+    }
+
+    channels[chan].users.push(userdata);
+
+};
 
 var nocommand = function(com){
     console.log(com + ": not a recognized command");
@@ -102,7 +126,7 @@ socket.sockets.on('connection', function(client){
 			//wow this is cool.
 		    break;
 		case "PRIVMSG":
-		    privmsg();
+		    privmsg(thisuser, params);
 		    break;
 		case "WHO":
 		    who(params);
@@ -111,6 +135,8 @@ socket.sockets.on('connection', function(client){
 		    nick(thisuser, params);
 		    break;
 		case "JOIN":
+		    joinchan(thisuser, params);
+		    break;
 		case "PART":
 		case "MODE":
 		case "TOPIC":
@@ -124,6 +150,9 @@ socket.sockets.on('connection', function(client){
 	
 	    });
 	
+	client.on('disconnect', function(data){
+		
+	    });
 
 
     });
