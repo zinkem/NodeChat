@@ -97,6 +97,7 @@ socket.sockets.on('connection', function(client){
 		    break;
 		case "USER":
 		    user(thisuser, params);
+			//wow this is cool.
 		    break;
 		case "PRIVMSG":
 		    privmsg();
