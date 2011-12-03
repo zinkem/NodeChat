@@ -56,9 +56,22 @@ var privmsg = function() {
     console.log("PRIVATE MESSAGE!!");
 };
 
-var who = function(params) {
+var who = function(thisuser, params) {
     console.log("WHO!");
-}
+    var name = "";
+    if (params == "" || params == "0") {
+        var pattern = new RegExp(".*");
+    } else {
+        var pattern = new RegExp(params);
+    }
+    for(var i = 0; i < clients.length; i++) {
+        name = clients[i].nick;
+        if (name.match(pattern)) {
+            console.log(name);
+            thisuser.socket.emit(name + '\n');
+        }
+    }
+};
 
 var nick = function(userdata, nick){
 
@@ -105,7 +118,7 @@ socket.sockets.on('connection', function(client){
 		    privmsg();
 		    break;
 		case "WHO":
-		    who(params);
+		    who(thisuser, params);
 		    break;
 		case "NICK":
 		    nick(thisuser, params);
