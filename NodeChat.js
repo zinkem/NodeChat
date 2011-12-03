@@ -44,6 +44,26 @@ var channels = [];
 function chanData() {
     this.name = "";
     this.users = [];
+	this.mode = new channelModeData();
+}
+
+function channelModeData(){
+	this.operator;
+	this.private_chan;
+	this.secret_chan;
+	this.invite_only_chan;
+	this.topic_mod_by_op_only;
+	this.no_mes_from_outsiders;
+	this.moderated_chan; 
+	this.user_limit; //integer.
+	this.ban_mask; //array of nicks.
+	this.open_floor_chan;
+	this.key;
+}
+
+function userModeData(){
+	this.invisible;
+	this.operator;
 }
 
 var socket = io.listen(webServ);
@@ -68,12 +88,26 @@ var privmsg = function(user, params) {
 
 };
 
-var who = function(params) {
+var who = function(thisuser, params) {
     console.log("WHO!");
-};
-    
-var nick = function(userdata, nick){
 
+    var name = "";
+    if (params == "" || params == "0") {
+        var pattern = new RegExp(".*");
+    } else {
+        var pattern = new RegExp(params);
+    }
+    for(var i = 0; i < clients.length; i++) {
+        name = clients[i].nick;
+        if (name.match(pattern)) {
+            console.log(name);
+            thisuser.socket.emit(name + '\n');
+        }
+    }
+};
+
+
+var nick = function(userdata, nick){
     console.log(userdata.nick + " nick changed to " + nick);
     userdata.nick = nick;
 };
@@ -91,6 +125,22 @@ var joinchan = function(userdata, params){
 };
 
 var quit = function(userdata, params){
+};
+
+var userMode = function(params){
+	
+};
+
+var chanMode = function(params){
+
+};
+
+var mode = function(params){
+	if(params[0] === '#'){
+		chanMode(params);
+	} else {
+		userMode(params);
+	}
 };
 
 var nocommand = function(com){
@@ -118,7 +168,6 @@ socket.sockets.on('connection', function(client){
 		console.log(fullcommand);
 
 		switch(comtype){
-
 		case "INIT":
 		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
 		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
@@ -126,13 +175,12 @@ socket.sockets.on('connection', function(client){
 		    break;
 		case "USER":
 		    user(thisuser, params);
-			//wow this is cool.
 		    break;
 		case "PRIVMSG":
-		    privmsg(thisuser, params);
+		    privmsg(thisuser, params);				
 		    break;
 		case "WHO":
-		    who(params);
+		    who(thisuser, params);
 		    break;
 		case "NICK":
 		    nick(thisuser, params);
@@ -141,23 +189,37 @@ socket.sockets.on('connection', function(client){
 		    joinchan(thisuser, params);
 		    break;
 		case "PART":
+		    part(thisuser, pararms);
+		    break;
 		case "MODE":
+		    mode(params);
+		    break;
 		case "TOPIC":
+		    topic(thisuser, params);
+		    break;
 		case "LIST":
+		    list(thisuser, params);
+		    break;
 		case "INVITE":
+		    invite(thisuser, params);
+		    break;
 		case "KICK":
+		    invite(thisuser, params);
+		    break;
 		case "QUIT":
+		    quit(thisuser, params);
+		    break;
 		default:
 		    nocommand(comtype);
 		}
-	
+		
 	    });
 	
 	client.on('disconnect', function(data){
 		
 	    });
-
-
+	
+	
     });
 
 
