@@ -16,17 +16,19 @@ function checkForSend(input, event){
 
 		// Forward slash "/" denotes that the user is specifying a command.
 		if(msg[0] == '/'){
-			var command = msg.slice(1); // remove the forward slash.
-			//command = command.match(/\/([A-Za-z]*)/i); // capture all chars until we hit non-alphabetic char. 
-			switch(command.toUpperCase()){
+			msg = msg.slice(1); // remove the forward slash.
+			var command = msg.match(/[A-Za-z]*/i); // capture all chars until we hit non-alphabetic char.
+			input.value = command;// debugging.
+			// command = command.toUpperCase(); <-----hangs at this statement, also hangs using .toLowerCase()...why?
+			switch(command){
 				case "USER":
 					sendString = nick + " USER testing user";
 					break;
 				case "WHO":
-					// create send string
+					sendString = nick + " WHO ";
 					break;
 				case "NICK":
-					// create send string
+					sendString = nick + " NICK ";
 					break;
 				case "JOIN":
 					sendString = nick + " JOIN ";
@@ -40,7 +42,7 @@ function checkForSend(input, event){
 				case "BAN":
 				default:
 					// Not a recognized command!
-					sendString = nick + " crap " + nick;
+					sendString = nick + " "+command+" " + nick; // for debugging.
 			}
 			input.value = null;
 		} else if(currentnick != nick){
