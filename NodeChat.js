@@ -40,8 +40,10 @@ function userData(ip, socket) {
     this.channels = [];
 }
 
+var channels = [];
 function chanData() {
-
+    this.name = "";
+    this.users = [];
 }
 
 var socket = io.listen(webServ);
