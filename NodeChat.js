@@ -41,6 +41,7 @@ function userData(ip, socket) {
 }
 
 function chanData() {
+
 }
 
 var socket = io.listen(webServ);
@@ -109,13 +110,14 @@ socket.sockets.on('connection', function(client){
 		case "LIST":
 		case "INVITE":
 		case "KICK":
-		case "BAN":
+		case "QUIT":
 		default:
 		    nocommand(comtype);
 		}
 	
 	    });
 	
+
 
     });
 
