@@ -140,6 +140,7 @@ var chanMode = function(inputArray, params){
 		var operation = inputArray[1];
 
 		if(operation[0] === '+'){
+			console.log(inputArray);
 			for(var i = 1; i < operation.length; i++){
 				//add
 				switch(operation[i]){
@@ -165,14 +166,19 @@ var chanMode = function(inputArray, params){
 						channel.moderated_chan = true;
 						break;
 					case 'l':
-						channel.user_limit = inputArray[2];
+						channel.user_limit = inputArray[2]; // Add checks for existance of limit.
 						break;
 					case 'b':
-						channel.ban_mask
+						channel.ban_mask += inputArray[2];
+						break;
 					case 'v':
+						channel.open_floor_chan = true;
+						break;
 					case 'k':
+						channel.key = inputArray[2];
+						break;
 					default:
-
+						// Error: unrecognized option flag.
 				}
 			}
 		} else if(operation[0] === '-'){
