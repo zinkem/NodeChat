@@ -86,7 +86,7 @@ function init(){
 
     socket = new io.connect(domain);
 
-    socket.emit('data', "unknown INIT");
+    socket.emit('data', "unknown INIT ");
 
     beginChat(socket);
 }

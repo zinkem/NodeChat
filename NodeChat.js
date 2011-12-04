@@ -39,6 +39,7 @@ function userData(ip, socket) {
     this.ip = ip;
     this.channels = [];
     this.mode = new userModeData();
+	return this; // need these return statements, otherwise nothing is passed back.
 }
 
 var channels = [];
@@ -46,6 +47,7 @@ function chanData() {
     this.name = "";
     this.users = [];
 	this.mode = new channelModeData();
+	return this; // need these return statements, otherwise nothing is passed back.
 }
 
 function channelModeData(){
@@ -60,11 +62,13 @@ function channelModeData(){
 	this.ban_mask = []; // array of banned users (nicks)?
 	this.open_floor_chan = false; // boolean
 	this.key = ""; // string?
+	return this; // need these return statements, otherwise nothing is passed back.
 }
 
 function userModeData(){
-	this.invisible = []; // Array of channl names user is invisible to.
-	this.operator = []; // Array of channel names user is operator of.
+	this.invisible = []; // Array of channl names user is invisible to?
+	this.operator = []; // Array of channel names user is operator of?
+	return this; // need these return statements, otherwise nothing is passed back.
 }
 
 var socket = io.listen(webServ);
@@ -156,7 +160,7 @@ var userMode = function(inputArray, params){
 var chanMode = function(inputArray, params){
 	var channelName = inputArray[0];
 	var channel = channels[0];
-	console.log(channel);
+	//console.log(channel);
 	if(!channel){
 		// Error: No channel with given name.
 		console.log("ERROR: Can't find channel \""+channelName+"\"!");
@@ -271,6 +275,7 @@ socket.sockets.on('connection', function(client){
 		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
 		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
 			var newChannel = chanData(); // Create new channel data.
+			if(newChannel == null) console.log("No NEW CHANNEL!");
 			newChannel.name = "#cs455"; // Set channel name.
 			newChannel.users.push(thisuser); // Add current user to channel.
 			channels.push(newChannel); // Add new channel to array of channels.
