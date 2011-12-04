@@ -34,10 +34,10 @@ webServ.listen(8000);
 var clients = [];
 function userData(ip, socket) {
     this.socket = socket;
-    this.nick = "guest"+ip+socket;
+    this.nick = "";
     this.uid = ip;
     this.ip = ip;
-    this.channels = [];
+    this.channels = []; // chanData[];
     this.mode = new userModeData();
 	return this; // need these return statements, otherwise nothing is passed back.
 }
@@ -45,7 +45,7 @@ function userData(ip, socket) {
 var channels = [];
 function chanData() {
     this.name = "";
-    this.users = [];
+    this.users = []; // userData[]
 	this.mode = new channelModeData();
 	return this; // need these return statements, otherwise nothing is passed back.
 }
@@ -71,19 +71,21 @@ function userModeData(){
 	return this; // need these return statements, otherwise nothing is passed back.
 }
 
+/* Do not use, instead use channels[<channel_name>]
 function findChannelWithName(chanName){
 	for(var i = 0; i < channels.length; i++){
 		if(channels[i].name === chanName) return channels[i];
 	}
 	return null;
-}
+}*/
 
+/* Do not use, instead use clients[<nickname>]
 function findUserWithNick(userNick){
 	for(var i = 0; i < clients.length; i++){
 		if(clients[i].nick === userNick) return clients[i];
 	}
 	return null;
-}
+}*/
 
 var socket = io.listen(webServ);
 
@@ -174,7 +176,7 @@ var userMode = function(inputArray, params){
 var chanMode = function(thisuser, inputArray, params){
 	var channelName = inputArray[0];
 console.log(thisuser.nick);// testing
-	var channel = findChannelWithName(channelName);
+	var channel = channels[channelName];//findChannelWithName(channelName);
 	if(!channel){
 		// Error: No channel with given name.
 		console.log("ERROR: Can't find channel \""+channelName+"\"!");
@@ -195,11 +197,11 @@ console.log(thisuser.nick);// testing
 						} else {
 							if(thisuser.nick === inputArray[2]) console.log("You are not allowed to make yourself an operator.");
 							else {
-								var user = findUserWithNick(inputArray[2]);
+								var user = clients[inputArray[2]]//findUserWithNick(inputArray[2]);
 								if(user != null){
 									//cross check channels and users?
-									channel.mode.operators.push(user.nick); // only pushing strings, not objects.
-									user.mode.operatorOf.push(channel.name); // dido.
+									channel.mode.operators[user.nick] = user; // only pushing strings, not objects.
+									user.mode.operatorOf[channel.name] = channel; // dido.
 								} else console.log("Could not find user \""+inputArray[2]+"\".");
 							}
 						}
@@ -292,7 +294,14 @@ socket.sockets.on('connection', function(client){
 	var address = client.handshake.address; // Get client ip address and port.
 	var thisuser = new userData(address.address, client);
 
-	clients.push(thisuser);
+	// Generate default nickname.
+	var tmpNick;
+	do{
+		 tmpNick = "guest"+Math.floor(Math.random()*1001);
+	} while(clients[tmpNick] != null);
+	thisuser.nick = tmpNick;
+
+	clients[tmpNick] = thisuser;
 
 	client.on('data', function(data){
 		console.log(data);
@@ -307,16 +316,6 @@ socket.sockets.on('connection', function(client){
 		console.log(params);
 
 		switch(comtype){
-		case "INIT":
-		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
-		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
-			var newChannel = chanData(); // Create new channel data.
-			if(newChannel == null) console.log("No NEW CHANNEL!"); // debugging console log.
-			newChannel.name = "#cs455"; // Set channel name.
-			newChannel.users.push(thisuser); // Add current user to channel.
-			channels.push(newChannel); // Add new channel to array of channels.
-		    client.send('#cs455 ' + uid); // Assign and send unique user id to client for identification later.
-		    break;
 		case "USER":
 		    user(thisuser, params);
 		    break;
