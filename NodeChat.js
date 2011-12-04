@@ -199,107 +199,136 @@ console.log(thisuser.nick);// testing
 	} else {
 		var operation = inputArray[1];
 		var argLength = inputArray.length;
+		var channelModes = channel.mode;
 		console.log("Found channel \""+channelName+"\"!"); // --- Debugging print.
+		if(operation.length > 2) console.log("This IRC only processes one mode change at a time.");
 		if(operation[0] === '+'){
 			console.log(inputArray); // --- Debugging print.
-			for(var i = 1; i < operation.length; i++){
-				//add
-				switch(operation[i]){
-					case 'o':
-						//give operator privlages.
-						if(argLength != 3){
-							// Error: not enough args.
-							console.log("ERROR: Not enough args specified to add an operators.");
-						} else {
-							if(thisuser.nick === inputArray[2]) console.log("You are not allowed to make yourself an operator.");
-							else {
-								var user = clients[inputArray[2]]//findUserWithNick(inputArray[2]);
-								if(user != null){
-									//cross check channels and users?
-									channel.mode.operators[user.nick] = user; // only pushing strings, not objects.
-									user.mode.operatorOf[channel.name] = channel; // dido.
-								} else console.log("Could not find user \""+inputArray[2]+"\".");
-							}
+			//add
+			switch(operation[1]){
+				case 'o':
+					//give operator privlages.
+					if(argLength != 3){
+						// Error: not enough args.
+						console.log("ERROR: Not enough args specified to add an operators.");
+					} else {
+						if(thisuser.nick === inputArray[2]) console.log("You are not allowed to make yourself an operator.");
+						else {
+							var user = clients[inputArray[2]]//findUserWithNick(inputArray[2]);
+							if(user != null){
+								//cross check channels and users?
+								channelModes.operators[user.nick] = user; // only pushing strings, not objects.
+								user.mode.operatorOf[channel.name] = channel; // dido.
+							} else console.log("Could not find user \""+inputArray[2]+"\".");
 						}
-						break;
-					case 'p':
-						channel.private_chan = true;
-						break;
-					case 's':
-						channel.secret_chan = true;
-						break;
-					case 'i':
-						channel.invite_only_chan = true;
-						break;
-					case 't':
-						channel.topic_mod_by_op_only = true;
-						break;
-					case 'n':
-						channel.no_mes_from_outsiders = true;
-						break;
-					case 'm':
-						channel.moderated_chan = true;
-						break;
-					case 'l':
-						if(argLength != 3){
-							// Error: not enough args.
-							console.log("ERROR: Not enough args specified to change user limit.");
-						} else {
-							if(isNaN(inputArray[2])) console.log("ERROR: Limit arg \""+inputArray[2]+"\" is not a number"); // Error
-							else channel.user_limit = inputArray[2];
-						}
-						break;
-					case 'b':
-						channel.ban_mask += inputArray[2]; // need to do more funky stuff.
-						break;
-					case 'v':
-						channel.open_floor_chan = true;
-						break;
-					case 'k':
-						channel.key = inputArray[2]; // need to do more funky stuff and discuss necessity.
-						break;
-					default:
-						// Error: unrecognized option flag.
-						console.log("ERROR: Unrecognized option flag \""+operation[i]+"\" --ignored.");
-				}
+					}
+					break;
+				case 'p':
+					channelModes.private_chan = true;
+					break;
+				case 's':
+					channelModes.secret_chan = true;
+					break;
+				case 'i':
+					channelModes.invite_only_chan = true;
+					break;
+				case 't':
+					channelModes.topic_mod_by_op_only = true;
+					break;
+				case 'n':
+					channelModes.no_mes_from_outsiders = true;
+					break;
+				case 'm':
+					channelModes.moderated_chan = true;
+					break;
+				case 'l':
+					if(argLength != 3){
+						// Error: not enough args.
+						console.log("ERROR: Not enough args specified to change user limit.");
+					} else {
+						if(isNaN(inputArray[2])) console.log("ERROR: Limit arg \""+inputArray[2]+"\" is not a number"); // Error
+						else channelModes.user_limit = inputArray[2];
+					}
+					break;
+				case 'b':
+					if(argLength != 3){
+						console.log("ERROR: No user specified.");
+					} else {
+						var user = clients[inputArray[2]];
+						if(user != null){
+							channelModes.ban_mask[user.name] = inputArray[2]; // need to do more funky stuff?
+						} else console.log("Could not find user \""+inputArray[2]+"\".");
+					}
+					break;
+				case 'v':
+					channelModes.open_floor_chan = true;
+					break;
+				case 'k':
+					channelModes.key = inputArray[2]; // need to do more funky stuff and discuss necessity.
+					break;
+				default:
+					// Error: unrecognized option flag.
+					console.log("ERROR: Unrecognized option flag \""+operation[i]+"\" --ignored.");
 			}
 		} else if(operation[0] === '-'){
-			for(var i = 1; i < operation.length; i++){
-				//subtract
-				switch(operation[i]){
-					case 'o':
-						//take operator privlages.
-						break;
-					case 'p':
-						break;
-					case 's':
-						break;
-					case 'i':
-						break;
-					case 't':
-						break;
-					case 'n':
-						break;
-					case 'm':
-						channel.moderated_chan = false;
-						break;
-					case 'l':
-						
-						break;
-					case 'b':
-						
-						break;
-					case 'v':
-						channel.open_floor_chan = false;
-						break;
-					case 'k':
-						break;
-					default:
+			//subtract
+			switch(operation[1]){
+				case 'o':
+					//take operator privlages.
+					if(argLength != 3){
+						// Error: not enough args.
+						console.log("ERROR: Not enough args specified to add an operators.");
+					} else {
+						var user = clients[inputArray[2]]//findUserWithNick(inputArray[2]);
+						if(user != null){
+							//cross check channels and users?
+							channelModes.operators[user.nick] = user; // only pushing strings, not objects.
+							user.mode.operatorOf[channel.name] = channel; // dido.
+						} else console.log("Could not find user \""+inputArray[2]+"\".");
+					}
+					break;
+				case 'p':
+					channelModes.private_chan = false;
+					break;
+				case 's':
+					channelModes.secret_chan = false;
+					break;
+				case 'i':
+					channelModes.invite_only_chan = false;
+					break;
+				case 't':
+					channelModes.topic_mod_by_op_only = false;
+					break;
+				case 'n':
+					channelModes.no_mes_from_outsiders = false;
+					break;
+				case 'm':
+					channelModes.moderated_chan = false;
+					break;
+				case 'l':
+					channelModes.user_limit = null;
+					break;
+				case 'b':
+					if(argLength != 3){
+						console.log("ERROR: No user specified.");
+					} else {
+						var user = clients[inputArray[2]];
+						if(user != null){
+							delete channelModes.ban_mask[inputArray[2]]; // need to do more funky stuff?
+						} else console.log("Could not find user \""+inputArray[2]+"\".");
+					}
+					break;
+				case 'v':
+					channelModes.open_floor_chan = false;
+					break;
+				case 'k':
+					break;
+				default:
 
-				}
 			}
 		} else {
 			//error;
+			console.log("Mode flag must be preceeded by +|-");
 		}
 	}
 };
