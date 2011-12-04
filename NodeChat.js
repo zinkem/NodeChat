@@ -71,22 +71,6 @@ function userModeData(){
 	return this; // need these return statements, otherwise nothing is passed back.
 }
 
-/* Do not use, instead use channels[<channel_name>]
-function findChannelWithName(chanName){
-	for(var i = 0; i < channels.length; i++){
-		if(channels[i].name === chanName) return channels[i];
-	}
-	return null;
-}*/
-
-/* Do not use, instead use clients[<nickname>]
-function findUserWithNick(userNick){
-	for(var i = 0; i < clients.length; i++){
-		if(clients[i].nick === userNick) return clients[i];
-	}
-	return null;
-}*/
-
 var socket = io.listen(webServ);
 
 var user = function(params) {
@@ -268,7 +252,7 @@ console.log(thisuser.nick);// testing
 					break;
 				default:
 					// Error: unrecognized option flag.
-					console.log("ERROR: Unrecognized option flag \""+operation[i]+"\" --ignored.");
+					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
 			}
 		} else if(operation[0] === '-'){
 			//subtract
@@ -324,7 +308,7 @@ console.log(thisuser.nick);// testing
 				case 'k':
 					break;
 				default:
-
+					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
 			}
 		} else {
 			//error;
