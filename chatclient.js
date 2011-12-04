@@ -86,7 +86,8 @@ function init(){
 
     socket = new io.connect(domain);
 
-    socket.emit('data', "unknown INIT ");
+    socket.emit('data', "unknown NICK ");
+	socket.emit('data', currentNick+" USER ");
 
 
     socket.on('INIT', function(data){

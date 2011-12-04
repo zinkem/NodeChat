@@ -255,15 +255,29 @@ console.log(thisuser.nick);// testing
 						//take operator privlages.
 						break;
 					case 'p':
+						break;
 					case 's':
+						break;
 					case 'i':
+						break;
 					case 't':
+						break;
 					case 'n':
+						break;
 					case 'm':
+						channel.moderated_chan = false;
+						break;
 					case 'l':
+						
+						break;
 					case 'b':
+						
+						break;
 					case 'v':
+						channel.open_floor_chan = false;
+						break;
 					case 'k':
+						break;
 					default:
 
 				}
