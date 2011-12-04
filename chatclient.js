@@ -78,30 +78,7 @@ function beginChat(socket){
     //showChat('zinkem');
     //showChat('kali');
 
-    socket.on('INIT', function(data){
-	    console.log("Client side INIT "+ data);
-	});
 
-    socket.on('message', function(data){
-
-	    	console.log('message: ' + data);
-
-	   		var a = data.indexOf(' ');
-            var chan = data.slice(0, a);
-            var chan_name = data.slice(1, a);
-            var content = data.slice(a);
-
-            var chatbox = document.getElementById(chan_name);
-            var inputbox = document.getElementById(chan);
-
-            var newDiv = document.createElement('div');
-            newDiv.innerHTML = content + "<br/>";
-            chatbox.insertBefore(newDiv, inputbox);
-
-            var chatboxchildren = chatbox.children;
-            if(chatboxchildren.length > linesToDisplay+2)
-	    	chatbox.removeChild(chatboxchildren.item(1));
-		});
 }
 
 
@@ -113,3 +90,89 @@ function init(){
 
     beginChat(socket);
 }
+
+
+var privmsg = function(user, params){
+    var a = data.indexOf(' ');
+    var chan = data.slice(0, a);
+    var chan_name = data.slice(1, a);
+    var content = data.slice(a);
+    
+    var chatbox = document.getElementById(chan_name);
+    var inputbox = document.getElementById(chan);
+    
+    var newDiv = document.createElement('div');
+    newDiv.innerHTML = content + "<br/>";
+    chatbox.insertBefore(newDiv, inputbox);
+    
+    var chatboxchildren = chatbox.children;
+    if(chatboxchildren.length > linesToDisplay+2)
+	chatbox.removeChild(chatboxchildren.item(1));
+    
+    console.log(data);
+    
+};
+
+
+socket.on('INIT', function(data){
+	console.log("Client side INIT "+ data);
+    });
+
+socket.on('message', function(data){
+	
+	console.log('message: ' + data);
+	
+	
+	var a = data.indexOf(' ');
+	var currentuid = data.slice(0, a);
+	var fullcommand = data.slice(a+1, data.length);
+	a = fullcommand.indexOf(' '); // find index of next space.
+	var comtype = fullcommand.slice(0, a);
+	var params = fullcommand.slice(a+1, fullcommand.length);
+	
+	console.log(fullcommand);
+	
+	thisuser = currentuid;
+
+	switch(comtype){
+	case "USER":
+	    user(thisuser, params);
+	    break;
+	case "PRIVMSG":
+	    privmsg(thisuser, params);				
+	    break;
+	case "WHO":
+	    who(thisuser, params);
+	    break;
+	case "NICK":
+	    nick(thisuser, params);
+	    break;
+	case "JOIN":
+	    joinchan(thisuser, params);
+		break;
+	case "PART":
+	    part(thisuser, pararms);
+	    break;
+	case "MODE":
+	    mode(params);
+	    break;
+	case "TOPIC":
+	    topic(thisuser, params);
+	    break;
+	case "LIST":
+		list(thisuser, params);
+		break;
+	case "INVITE":
+	    invite(thisuser, params);
+	    break;
+	case "KICK":
+	    invite(thisuser, params);
+	    break;
+	    case "QUIT":
+		quit(thisuser, params);
+		break;
+	default:
+	    nocommand(comtype);
+	}
+	
+    });
