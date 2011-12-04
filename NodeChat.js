@@ -189,11 +189,19 @@ console.log(thisuser.nick);// testing
 				switch(operation[i]){
 					case 'o':
 						//give operator privlages.
-						if(argLength < 3){
+						if(argLength != 3){
 							// Error: not enough args.
 							console.log("ERROR: Not enough args specified to add an operators.");
 						} else {
-							if(thisuser.nick === inputArray[2]);
+							if(thisuser.nick === inputArray[2]) console.log("You are not allowed to make yourself an operator.");
+							else {
+								var user = findUserWithNick(inputArray[2]);
+								if(user != null){
+									//cross check channels and users?
+									channel.mode.operators.push(user.nick); // only pushing strings, not objects.
+									user.mode.operatorOf.push(channel.name); // dido.
+								} else console.log("Could not find user \""+inputArray[2]+"\".");
+							}
 						}
 						break;
 					case 'p':
@@ -215,7 +223,7 @@ console.log(thisuser.nick);// testing
 						channel.moderated_chan = true;
 						break;
 					case 'l':
-						if(argLength < 3){
+						if(argLength != 3){
 							// Error: not enough args.
 							console.log("ERROR: Not enough args specified to change user limit.");
 						} else {
@@ -224,13 +232,13 @@ console.log(thisuser.nick);// testing
 						}
 						break;
 					case 'b':
-						channel.ban_mask += inputArray[2];
+						channel.ban_mask += inputArray[2]; // need to do more funky stuff.
 						break;
 					case 'v':
 						channel.open_floor_chan = true;
 						break;
 					case 'k':
-						channel.key = inputArray[2];
+						channel.key = inputArray[2]; // need to do more funky stuff and discuss necessity.
 						break;
 					default:
 						// Error: unrecognized option flag.
