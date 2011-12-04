@@ -49,22 +49,22 @@ function chanData() {
 }
 
 function channelModeData(){
-	this.operator; // array of operators (nicks)?
-	this.private_chan; // boolean
-	this.secret_chan; // boolean
-	this.invite_only_chan; // boolean
-	this.topic_mod_by_op_only; // boolean
-	this.no_mes_from_outsiders; // boolean
-	this.moderated_chan; // boolean
-	this.user_limit; // integer.
-	this.ban_mask; // array of banned users (nicks)?
-	this.open_floor_chan; // boolean
-	this.key; // string?
+	this.operator = []; // array of operators (nicks)?
+	this.private_chan = false; // boolean
+	this.secret_chan = false; // boolean
+	this.invite_only_chan = false; // boolean
+	this.topic_mod_by_op_only = false; // boolean
+	this.no_mes_from_outsiders = false; // boolean
+	this.moderated_chan = false; // boolean
+	this.user_limit = null; // integer.
+	this.ban_mask = []; // array of banned users (nicks)?
+	this.open_floor_chan = false; // boolean
+	this.key = ""; // string?
 }
 
 function userModeData(){
-	this.invisible; // boolean
-	this.operator; // boolean
+	this.invisible = []; // Array of channl names user is invisible to.
+	this.operator = []; // Array of channel names user is operator of.
 }
 
 var socket = io.listen(webServ);
@@ -155,7 +155,8 @@ var userMode = function(inputArray, params){
 
 var chanMode = function(inputArray, params){
 	var channelName = inputArray[0];
-	var channel = channels[channelName];
+	var channel = channels[0];
+	console.log(channel);
 	if(!channel){
 		// Error: No channel with given name.
 		console.log("ERROR: Can't find channel \""+channelName+"\"!");
@@ -269,6 +270,10 @@ socket.sockets.on('connection', function(client){
 		case "INIT":
 		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
 		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
+			var newChannel = chanData(); // Create new channel data.
+			newChannel.name = "#cs455"; // Set channel name.
+			newChannel.users.push(thisuser); // Add current user to channel.
+			channels.push(newChannel); // Add new channel to array of channels.
 		    client.send('#cs455 ' + uid); // Assign and send unique user id to client for identification later.
 		    break;
 		case "USER":
