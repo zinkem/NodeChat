@@ -18,11 +18,11 @@ function checkForSend(input, event){
 		if(msg[0] == '/'){
 			msg = msg.slice(1); // remove the forward slash.
 			var userInput = msg.split(/\s+/);
-			input.value = msg;// debugging.
+			//input.value = msg;// debugging.
 			var command = userInput[0].toUpperCase();
 			var param = userInput.slice(1).join(' ');
 			sendString = nick + " " + command + " " + param;
-			//input.value = null;
+			input.value = null;
 		} else if(currentnick != nick){
 			sendString = currentnick + " NICK " + nick;
 			currentnick = nick;

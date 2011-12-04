@@ -159,8 +159,13 @@ var userMode = function(inputArray, params){
 
 var chanMode = function(inputArray, params){
 	var channelName = inputArray[0];
-	var channel = channels[0];
-	//console.log(channel);
+	var channel = null;
+	for(var i = 0; i < channels.length; i++){
+		if(channels[i].name === channelName){
+			channel = channels[i];
+			break;
+		}
+	}
 	if(!channel){
 		// Error: No channel with given name.
 		console.log("ERROR: Can't find channel \""+channelName+"\"!");
