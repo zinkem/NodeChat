@@ -34,7 +34,7 @@ webServ.listen(8000);
 var clients = [];
 function userData(ip, socket) {
     this.socket = socket;
-    this.nick = "";
+    this.nick = "guest"+ip+socket;
     this.uid = ip;
     this.ip = ip;
     this.channels = [];
@@ -51,7 +51,7 @@ function chanData() {
 }
 
 function channelModeData(){
-	this.operator = []; // array of operators (nicks)?
+	this.operators = []; // array of operators (nicks)?
 	this.private_chan = false; // boolean
 	this.secret_chan = false; // boolean
 	this.invite_only_chan = false; // boolean
@@ -67,8 +67,22 @@ function channelModeData(){
 
 function userModeData(){
 	this.invisible = []; // Array of channl names user is invisible to?
-	this.operator = []; // Array of channel names user is operator of?
+	this.operatorOf = []; // Array of channel names user is operator of?
 	return this; // need these return statements, otherwise nothing is passed back.
+}
+
+function findChannelWithName(chanName){
+	for(var i = 0; i < channels.length; i++){
+		if(channels[i].name === chanName) return channels[i];
+	}
+	return null;
+}
+
+function findUserWithNick(userNick){
+	for(var i = 0; i < clients.length; i++){
+		if(clients[i].nick === userNick) return clients[i];
+	}
+	return null;
 }
 
 var socket = io.listen(webServ);
@@ -157,15 +171,10 @@ var userMode = function(inputArray, params){
 	
 };
 
-var chanMode = function(inputArray, params){
+var chanMode = function(thisuser, inputArray, params){
 	var channelName = inputArray[0];
-	var channel = null;
-	for(var i = 0; i < channels.length; i++){
-		if(channels[i].name === channelName){
-			channel = channels[i];
-			break;
-		}
-	}
+console.log(thisuser.nick);// testing
+	var channel = findChannelWithName(channelName);
 	if(!channel){
 		// Error: No channel with given name.
 		console.log("ERROR: Can't find channel \""+channelName+"\"!");
@@ -180,6 +189,12 @@ var chanMode = function(inputArray, params){
 				switch(operation[i]){
 					case 'o':
 						//give operator privlages.
+						if(argLength < 3){
+							// Error: not enough args.
+							console.log("ERROR: Not enough args specified to add an operators.");
+						} else {
+							if(thisuser.nick === inputArray[2]);
+						}
 						break;
 					case 'p':
 						channel.private_chan = true;
@@ -249,13 +264,13 @@ var chanMode = function(inputArray, params){
 	}
 };
 
-var mode = function(params){
+var mode = function(thisuser, params){
 	var inputArray = params.split(/\s+/);
 	if(params[0] === '#'){
 		console.log(inputArray[0]);
-		chanMode(inputArray, params);
+		chanMode(thisuser, inputArray, params);
 	} else {
-		userMode(inputArray, params);
+		userMode(thisuser, inputArray, params);
 	}
 };
 
@@ -288,7 +303,7 @@ socket.sockets.on('connection', function(client){
 		    console.log("INIT connection with client: "+address.address+":"+address.port); // Log client ip and port.
 		    var uid = address.address+address.port; // Some sort of ip/port combo unique id <--- Replace with better identifier????
 			var newChannel = chanData(); // Create new channel data.
-			if(newChannel == null) console.log("No NEW CHANNEL!");
+			if(newChannel == null) console.log("No NEW CHANNEL!"); // debugging console log.
 			newChannel.name = "#cs455"; // Set channel name.
 			newChannel.users.push(thisuser); // Add current user to channel.
 			channels.push(newChannel); // Add new channel to array of channels.
@@ -313,7 +328,7 @@ socket.sockets.on('connection', function(client){
 		    part(thisuser, pararms);
 		    break;
 		case "MODE":
-		    mode(params);
+		    mode(thisuser, params);
 		    break;
 		case "TOPIC":
 		    topic(thisuser, params);
