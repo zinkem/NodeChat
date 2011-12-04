@@ -136,11 +136,12 @@ var chanMode = function(inputArray, params){
 	var channel = channels[channelName];
 	if(!channel){
 		// Error: No channel with given name.
+		console.log("ERROR: Can't find channel \""+channelName+"\"!");
 	} else {
 		var operation = inputArray[1];
-
+		console.log("Found channel \""+channelName+"\"!"); // --- Debugging print.
 		if(operation[0] === '+'){
-			console.log(inputArray);
+			console.log(inputArray); // --- Debugging print.
 			for(var i = 1; i < operation.length; i++){
 				//add
 				switch(operation[i]){
@@ -211,6 +212,7 @@ var chanMode = function(inputArray, params){
 var mode = function(params){
 	var inputArray = params.split(/\s+/);
 	if(params[0] === '#'){
+		console.log(inputArray[0]);
 		chanMode(inputArray, params);
 	} else {
 		userMode(inputArray, params);
@@ -239,7 +241,7 @@ socket.sockets.on('connection', function(client){
 		var comtype = fullcommand.slice(0, a);
 		var params = fullcommand.slice(a+1, fullcommand.length);
 		
-		console.log(fullcommand);
+		console.log(params);
 
 		switch(comtype){
 		case "INIT":
