@@ -38,6 +38,7 @@ function userData(ip, socket) {
     this.uid = ip;
     this.ip = ip;
     this.channels = [];
+    this.mode = new userModeData();
 }
 
 var channels = [];
@@ -90,18 +91,39 @@ var privmsg = function(user, params) {
 
 var who = function(thisuser, params) {
     console.log("WHO!");
-
+    var pattern = "";
     var name = "";
-    if (params == "" || params == "0") {
-        var pattern = new RegExp(".*");
+    var i = 0;
+    var thatuser;
+    var chanfound = false;
+    if (params[0] === '#') {
+        if (channels[params].name == params) {
+            for (i = 0; i < channels[params].users.length; i++) {
+                thatuser = channels[params].users[i];
+                if (!thatuser.mode.invisible) {
+                    name = thatuser.nick;
+                    console.log(name);
+                    thisuser.socket.emit(name + '\n');
+                }
+            }
+        } else {
+            console.log("Channel " + params + " not found!");
+            thisuser.socket.emit("Channel " + params + " not found!\n");
+        }
     } else {
-        var pattern = new RegExp(params);
-    }
-    for(var i = 0; i < clients.length; i++) {
-        name = clients[i].nick;
-        if (name.match(pattern)) {
-            console.log(name);
-            thisuser.socket.emit(name + '\n');
+        if (params == "" || params == "0") {
+            pattern = new RegExp(".*");
+        } else {
+            pattern = new RegExp(params);
+        }
+        for (var i = 0; i < clients.length; i++) {
+            if (!clients[i].mode.invisible) {
+                name = clients[i].nick;
+                if (name.match(pattern)) {
+                    console.log(name);
+                    thisuser.socket.emit(name + '\n');
+                }
+            }
         }
     }
 };
