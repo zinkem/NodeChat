@@ -183,6 +183,7 @@ console.log(thisuser.nick);// testing
 	} else {
 		var operation = inputArray[1];
 		var argLength = inputArray.length;
+		var channelModes = channel.mode;
 		console.log("Found channel \""+channelName+"\"!"); // --- Debugging print.
 		if(operation[0] === '+'){
 			console.log(inputArray); // --- Debugging print.
@@ -200,29 +201,29 @@ console.log(thisuser.nick);// testing
 								var user = clients[inputArray[2]]//findUserWithNick(inputArray[2]);
 								if(user != null){
 									//cross check channels and users?
-									channel.mode.operators[user.nick] = user; // only pushing strings, not objects.
+									channelModes.operators[user.nick] = user; // only pushing strings, not objects.
 									user.mode.operatorOf[channel.name] = channel; // dido.
 								} else console.log("Could not find user \""+inputArray[2]+"\".");
 							}
 						}
 						break;
 					case 'p':
-						channel.private_chan = true;
+						channelModes.private_chan = true;
 						break;
 					case 's':
-						channel.secret_chan = true;
+						channelModes.secret_chan = true;
 						break;
 					case 'i':
-						channel.invite_only_chan = true;
+						channelModes.invite_only_chan = true;
 						break;
 					case 't':
-						channel.topic_mod_by_op_only = true;
+						channelModes.topic_mod_by_op_only = true;
 						break;
 					case 'n':
-						channel.no_mes_from_outsiders = true;
+						channelModes.no_mes_from_outsiders = true;
 						break;
 					case 'm':
-						channel.moderated_chan = true;
+						channelModes.moderated_chan = true;
 						break;
 					case 'l':
 						if(argLength != 3){
@@ -230,17 +231,17 @@ console.log(thisuser.nick);// testing
 							console.log("ERROR: Not enough args specified to change user limit.");
 						} else {
 							if(isNaN(inputArray[2])) console.log("ERROR: Limit arg \""+inputArray[2]+"\" is not a number"); // Error
-							else channel.user_limit = inputArray[2];
+							else channelModes.user_limit = inputArray[2];
 						}
 						break;
 					case 'b':
-						channel.ban_mask += inputArray[2]; // need to do more funky stuff.
+						channelModes.ban_mask += inputArray[2]; // need to do more funky stuff.
 						break;
 					case 'v':
-						channel.open_floor_chan = true;
+						channelModes.open_floor_chan = true;
 						break;
 					case 'k':
-						channel.key = inputArray[2]; // need to do more funky stuff and discuss necessity.
+						channelModes.key = inputArray[2]; // need to do more funky stuff and discuss necessity.
 						break;
 					default:
 						// Error: unrecognized option flag.
@@ -255,17 +256,22 @@ console.log(thisuser.nick);// testing
 						//take operator privlages.
 						break;
 					case 'p':
+						channelModes.private_chan = false;
 						break;
 					case 's':
+						channelModes.secret_chan = false;
 						break;
 					case 'i':
+						channelModes.invite_only_chan = false;
 						break;
 					case 't':
+						channelModes.topic_mod_by_op_only = false;
 						break;
 					case 'n':
+						channelModes.no_mes_from_outsiders = false;
 						break;
 					case 'm':
-						channel.moderated_chan = false;
+						channelModes.moderated_chan = false;
 						break;
 					case 'l':
 						
@@ -274,7 +280,7 @@ console.log(thisuser.nick);// testing
 						
 						break;
 					case 'v':
-						channel.open_floor_chan = false;
+						channelModes.open_floor_chan = false;
 						break;
 					case 'k':
 						break;
