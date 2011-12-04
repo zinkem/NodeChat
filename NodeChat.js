@@ -104,7 +104,7 @@ var privmsg = function(user, params) {
     console.log(sendmsg);
 
     for(i = 0; i < dest.length; i++){
-	dest[i].socket.emit(sendmsg);
+	dest[i].socket.emit('message', sendmsg);
     }
 
 };
@@ -151,7 +151,7 @@ var who = function(thisuser, params) {
 
 var nick = function(userdata, nick){
 
-    if(clients[nick]){
+    if(clients[nick] != undefined){
 	console.log("cannot change " + userdata.nick + "'s name to " + nick);
 	console.log("Nick taken");
 	return;
@@ -162,7 +162,7 @@ var nick = function(userdata, nick){
     oldnick = userdata.nick;
     userdata.nick = nick;
 
-    if(clients[oldnick]){
+    if(clients[oldnick] != undefined){
 	delete clients[oldnick];
     }
 
