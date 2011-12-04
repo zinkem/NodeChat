@@ -325,15 +325,24 @@ socket.sockets.on('connection', function(client){
 
 	client.on('data', function(data){
 		console.log(data);
-		
-		var a = data.indexOf(' ');
-		var currentuid = data.slice(0, a);
-		var fullcommand = data.slice(a+1, data.length);
+		console.log(data[0]);
+		var a, fullcommand;
+
+		if(data[0] === ':'){
+		    a = data.indexOf(' ');
+		    var currentuid = data.slice(0, a);
+		    fullcommand = data.slice(a+1, data.length);
+		} else {
+		    fullcommand = data;
+		}
+
 		a = fullcommand.indexOf(' '); // find index of next space.
 		var comtype = fullcommand.slice(0, a);
 		var params = fullcommand.slice(a+1, fullcommand.length);
-		
+
 		console.log(params);
+
+		comtype = comtype.toUpperCase();
 
 		switch(comtype){
 		case "USER":
