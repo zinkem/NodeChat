@@ -153,7 +153,7 @@ var nick = function(userdata, nick){
 };
 
 var joinchan = function(userdata, params){
-    chan = params.split(' ')[0];
+    var chan = params.split(' ')[0]; //channel name to join
 
     if(!channels[chan]){
 	channels[chan] = new chanData();
@@ -161,7 +161,7 @@ var joinchan = function(userdata, params){
     }
 
     channels[chan].users.push(userdata);
-
+    userdata.channels.push(channels[chan]);
 };
 
 var quit = function(userdata, params){
