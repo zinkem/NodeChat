@@ -24,7 +24,7 @@ function checkForSend(input, event){
 			sendString = "PRIVMSG " + input.id + " " + nick  + " " +  msg;
 			input.value = null;
 		}
-		console.log(sendString);
+		console.log("to server: " + sendString);
 		socket.emit('data', sendString);
 
     }
@@ -158,6 +158,9 @@ function init(){
 
 
 var privmsg = function(user, params){
+
+    console.log(user + " ... " + params);
+
     var a = params.indexOf(' ');
     var chan = params.slice(0, a);
     var chan_name = params.slice(1, a);
