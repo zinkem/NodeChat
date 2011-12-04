@@ -16,21 +16,16 @@ function checkForSend(input, event){
 
 		// Forward slash "/" denotes that the user is specifying a command.
 		if(msg[0] == '/'){
-			msg = msg.slice(1); // remove the forward slash.
-			var userInput = msg.split(/\s+/);
-			//input.value = msg;// debugging.
-			var command = userInput[0].toUpperCase();
-			var param = userInput.slice(1).join(' ');
-			sendString = nick + " " + command + " " + param;
-			input.value = null;
+		    sendString = msg.slice(1); // remove the forward slash.
 		} else if(currentnick != nick){
-			sendString = currentnick + " NICK " + nick;
+			sendString = "NICK " + nick;
 			currentnick = nick;
 		} else {
-			sendString = nick + " PRIVMSG " + input.id + " " + nick  + " " +  msg;
+			sendString = "PRIVMSG " + input.id + " " + nick  + " " +  msg;
 			input.value = null;
 		}
-        socket.emit('data', sendString);
+		console.log(sendString);
+		socket.emit('data', sendString);
 
     }
 
@@ -87,11 +82,11 @@ function init(){
     nameField.setAttribute("onKeyPress", "checkForSend(this, event)");
     document.body.appendChild(nameField);
 
-    socket.emit('data', "NICK " + currentNick);
+    socket.emit('data', "NICK " + currentnick);
 
     //need to wait on a response here... might need to do something special?
     
-    socket.emit('data', "USER " + );
+    socket.emit('data', "USER " + currentnick );
 
 
     socket.on('INIT', function(data){
