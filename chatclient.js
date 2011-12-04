@@ -88,15 +88,80 @@ function init(){
 
     socket.emit('data', "unknown INIT ");
 
+
+    socket.on('INIT', function(data){
+	    console.log("Client side INIT "+ data);
+	});
+    
+    socket.on('message', function(data){
+	    
+	    console.log('message: ' + data);
+	    
+	    
+	    var a = data.indexOf(' ');
+	    var currentuid = data.slice(0, a);
+	    var fullcommand = data.slice(a+1, data.length);
+	    a = fullcommand.indexOf(' '); // find index of next space.
+	    var comtype = fullcommand.slice(0, a);
+	    var params = fullcommand.slice(a+1, fullcommand.length);
+	    
+	    console.log(fullcommand);
+	    
+	    thisuser = currentuid;
+	    
+	    switch(comtype){
+	    case "USER":
+		user(thisuser, params);
+		break;
+	    case "PRIVMSG":
+		privmsg(thisuser, params);				
+		break;
+	    case "WHO":
+		who(thisuser, params);
+		break;
+	    case "NICK":
+		nick(thisuser, params);
+		break;
+	    case "JOIN":
+		joinchan(thisuser, params);
+		break;
+	    case "PART":
+		part(thisuser, pararms);
+		break;
+	    case "MODE":
+		mode(params);
+		break;
+	    case "TOPIC":
+		topic(thisuser, params);
+		break;
+	    case "LIST":
+		list(thisuser, params);
+		break;
+	    case "INVITE":
+		invite(thisuser, params);
+		break;
+	    case "KICK":
+		invite(thisuser, params);
+		break;
+	    case "QUIT":
+		quit(thisuser, params);
+		break;
+	    default:
+		nocommand(comtype);
+	    }
+	    
+	});
+    
+    
     beginChat(socket);
 }
 
 
 var privmsg = function(user, params){
-    var a = data.indexOf(' ');
-    var chan = data.slice(0, a);
-    var chan_name = data.slice(1, a);
-    var content = data.slice(a);
+    var a = params.indexOf(' ');
+    var chan = params.slice(0, a);
+    var chan_name = params.slice(1, a);
+    var content = params.slice(a);
     
     var chatbox = document.getElementById(chan_name);
     var inputbox = document.getElementById(chan);
@@ -109,70 +174,28 @@ var privmsg = function(user, params){
     if(chatboxchildren.length > linesToDisplay+2)
 	chatbox.removeChild(chatboxchildren.item(1));
     
-    console.log(data);
+    console.log(params);
     
 };
 
-
-socket.on('INIT', function(data){
-	console.log("Client side INIT "+ data);
-    });
-
-socket.on('message', function(data){
-	
-	console.log('message: ' + data);
-	
-	
-	var a = data.indexOf(' ');
-	var currentuid = data.slice(0, a);
-	var fullcommand = data.slice(a+1, data.length);
-	a = fullcommand.indexOf(' '); // find index of next space.
-	var comtype = fullcommand.slice(0, a);
-	var params = fullcommand.slice(a+1, fullcommand.length);
-	
-	console.log(fullcommand);
-	
-	thisuser = currentuid;
-
-	switch(comtype){
-	case "USER":
-	    user(thisuser, params);
-	    break;
-	case "PRIVMSG":
-	    privmsg(thisuser, params);				
-	    break;
-	case "WHO":
-	    who(thisuser, params);
-	    break;
-	case "NICK":
-	    nick(thisuser, params);
-	    break;
-	case "JOIN":
-	    joinchan(thisuser, params);
-		break;
-	case "PART":
-	    part(thisuser, pararms);
-	    break;
-	case "MODE":
-	    mode(params);
-	    break;
-	case "TOPIC":
-	    topic(thisuser, params);
-	    break;
-	case "LIST":
-		list(thisuser, params);
-		break;
-	case "INVITE":
-	    invite(thisuser, params);
-	    break;
-	case "KICK":
-	    invite(thisuser, params);
-	    break;
-	case "QUIT":
-		quit(thisuser, params);
-		break;
-	default:
-	    nocommand(comtype);
-	}
-	
-    });
+var who = function(thisuser, params){
+};
+var nick = function(thisuser, params){
+};
+var joinchan = function(thisuser, params){
+};
+var part = function(thisuser, pararms){
+};
+var mode = function(thisuser, params){
+};
+var list = function(thisuser, params){
+};
+var invite = function(thisuser, params){
+};
+var kick = function(thisuser, params){
+};
+var quit = function(thisuser, params){
+};
+var nocommand = function(comtype){
+    console.log("No command: " + comtype);
+};
