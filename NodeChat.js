@@ -48,22 +48,22 @@ function chanData() {
 }
 
 function channelModeData(){
-	this.operator;
-	this.private_chan;
-	this.secret_chan;
-	this.invite_only_chan;
-	this.topic_mod_by_op_only;
-	this.no_mes_from_outsiders;
-	this.moderated_chan; 
-	this.user_limit; //integer.
-	this.ban_mask; //array of nicks.
-	this.open_floor_chan;
-	this.key;
+	this.operator; // array of operators (nicks)?
+	this.private_chan; // boolean
+	this.secret_chan; // boolean
+	this.invite_only_chan; // boolean
+	this.topic_mod_by_op_only; // boolean
+	this.no_mes_from_outsiders; // boolean
+	this.moderated_chan; // boolean
+	this.user_limit; // integer.
+	this.ban_mask; // array of banned users (nicks)?
+	this.open_floor_chan; // boolean
+	this.key; // string?
 }
 
 function userModeData(){
-	this.invisible;
-	this.operator;
+	this.invisible; // boolean
+	this.operator; // boolean
 }
 
 var socket = io.listen(webServ);
@@ -127,19 +127,87 @@ var joinchan = function(userdata, params){
 var quit = function(userdata, params){
 };
 
-var userMode = function(params){
+var userMode = function(inputArray, params){
 	
 };
 
-var chanMode = function(params){
+var chanMode = function(inputArray, params){
+	var channelName = inputArray[0];
+	var channel = channels[channelName];
+	if(!channel){
+		// Error: No channel with given name.
+	} else {
+		var operation = inputArray[1];
 
+		if(operation[0] === '+'){
+			for(var i = 1; i < operation.length; i++){
+				//add
+				switch(operation[i]){
+					case 'o':
+						//give operator privlages.
+						break;
+					case 'p':
+						channel.private_chan = true;
+						break;
+					case 's':
+						channel.secret_chan = true;
+						break;
+					case 'i':
+						channel.invite_only_chan = true;
+						break;
+					case 't':
+						channel.topic_mod_by_op_only = true;
+						break;
+					case 'n':
+						channel.no_mes_from_outsiders = true;
+						break;
+					case 'm':
+						channel.moderated_chan = true;
+						break;
+					case 'l':
+						channel.user_limit = inputArray[2];
+						break;
+					case 'b':
+						channel.ban_mask
+					case 'v':
+					case 'k':
+					default:
+
+				}
+			}
+		} else if(operation[0] === '-'){
+			for(var i = 1; i < operation.length; i++){
+				//subtract
+				switch(operation[i]){
+					case 'o':
+						//take operator privlages.
+						break;
+					case 'p':
+					case 's':
+					case 'i':
+					case 't':
+					case 'n':
+					case 'm':
+					case 'l':
+					case 'b':
+					case 'v':
+					case 'k':
+					default:
+
+				}
+			}
+		} else {
+			//error;
+		}
+	}
 };
 
 var mode = function(params){
+	var inputArray = msg.split(/\s+/);
 	if(params[0] === '#'){
-		chanMode(params);
+		chanMode(inputArray, params);
 	} else {
-		userMode(params);
+		userMode(inputArray, params);
 	}
 };
 

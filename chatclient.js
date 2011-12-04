@@ -168,7 +168,7 @@ socket.on('message', function(data){
 	case "KICK":
 	    invite(thisuser, params);
 	    break;
-	    case "QUIT":
+	case "QUIT":
 		quit(thisuser, params);
 		break;
 	default:
