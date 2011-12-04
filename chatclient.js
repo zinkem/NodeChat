@@ -77,7 +77,7 @@ function init(){
 
     //create namefield and default nick
     var nameField = document.createElement("input");
-    nameField.value = currentnick = "guest"; // Default user name.
+    nameField.value = currentnick = "guest" + Math.floor(Math.random()*1001); //deflt username
     nameField.id = "nickField";
     nameField.setAttribute("onKeyPress", "checkForSend(this, event)");
     document.body.appendChild(nameField);

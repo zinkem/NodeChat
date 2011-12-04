@@ -150,8 +150,24 @@ var who = function(thisuser, params) {
 
 
 var nick = function(userdata, nick){
+
+    if(clients[nick]){
+	console.log("cannot change " + userdata.nick + "'s name to " + nick);
+	console.log("Nick taken");
+	return;
+    }
+
     console.log(userdata.nick + " nick changed to " + nick);
+
+    oldnick = userdata.nick;
     userdata.nick = nick;
+
+    if(clients[oldnick]){
+	delete clients[oldnick];
+    }
+
+    clients[userdata.nick] = userdata;
+
 };
 
 var joinchan = function(userdata, params){
@@ -337,18 +353,8 @@ socket.sockets.on('connection', function(client){
 	var address = client.handshake.address; // Get client ip address and port.
 	var thisuser = new userData(address.address, client);
 
-	// Generate default nickname.
-	var tmpNick;
-	do{
-		 tmpNick = "guest"+Math.floor(Math.random()*1001);
-	} while(clients[tmpNick] != null);
-	thisuser.nick = tmpNick;
-
-	clients[tmpNick] = thisuser;
-
 	client.on('data', function(data){
 		console.log(data);
-		console.log(data[0]);
 		var a, fullcommand;
 
 		if(data[0] === ':'){
