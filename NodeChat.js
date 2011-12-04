@@ -319,14 +319,19 @@ socket.sockets.on('connection', function(client){
 
 	client.on('data', function(data){
 		console.log(data);
-		
-		var a = data.indexOf(' ');
-		var currentuid = data.slice(0, a);
-		var fullcommand = data.slice(a+1, data.length);
-		a = fullcommand.indexOf(' '); // find index of next space.
-		var comtype = fullcommand.slice(0, a);
-		var params = fullcommand.slice(a+1, fullcommand.length);
-		
+
+		if(data[0] === ':'){
+		    var a = data.indexOf(' ');
+		    var currentuid = data.slice(0, a);
+		    var fullcommand = data.slice(a+1, data.length);
+		    a = fullcommand.indexOf(' '); // find index of next space.
+		    var comtype = fullcommand.slice(0, a);
+		    var params = fullcommand.slice(a+1, fullcommand.length);
+		} else {
+		    var a = data.indexOf(' ');
+		    var comtype = fullcommand.slice(0, a);
+		    var params = fullcommand.slice(a+1, fullcommand.length);
+		}
 		console.log(params);
 
 		switch(comtype){

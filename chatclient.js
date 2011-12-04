@@ -68,12 +68,6 @@ function beginChat(socket){
 
     //document.body = document.createElement("body");                                                               
 
-    var nameField = document.createElement("input");
-    nameField.value = currentnick = "guest"; // Default user name.
-    nameField.id = "nickField";
-    nameField.setAttribute("onKeyPress", "checkForSend(this, event)");
-    document.body.appendChild(nameField);
-
     showChat('cs455');
     //showChat('zinkem');
     //showChat('kali');
@@ -86,8 +80,18 @@ function init(){
 
     socket = new io.connect(domain);
 
-    socket.emit('data', "unknown NICK ");
-	socket.emit('data', currentNick+" USER ");
+    //create namefield and default nick
+    var nameField = document.createElement("input");
+    nameField.value = currentnick = "guest"; // Default user name.
+    nameField.id = "nickField";
+    nameField.setAttribute("onKeyPress", "checkForSend(this, event)");
+    document.body.appendChild(nameField);
+
+    socket.emit('data', "NICK " + currentNick);
+
+    //need to wait on a response here... might need to do something special?
+    
+    socket.emit('data', "USER " + );
 
 
     socket.on('INIT', function(data){
