@@ -209,7 +209,7 @@ var chanMode = function(inputArray, params){
 };
 
 var mode = function(params){
-	var inputArray = msg.split(/\s+/);
+	var inputArray = params.split(/\s+/);
 	if(params[0] === '#'){
 		chanMode(inputArray, params);
 	} else {
