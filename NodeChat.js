@@ -171,6 +171,7 @@ var chanMode = function(inputArray, params){
 		console.log("ERROR: Can't find channel \""+channelName+"\"!");
 	} else {
 		var operation = inputArray[1];
+		var argLength = inputArray.length;
 		console.log("Found channel \""+channelName+"\"!"); // --- Debugging print.
 		if(operation[0] === '+'){
 			console.log(inputArray); // --- Debugging print.
@@ -199,7 +200,13 @@ var chanMode = function(inputArray, params){
 						channel.moderated_chan = true;
 						break;
 					case 'l':
-						channel.user_limit = inputArray[2]; // Add checks for existance of limit.
+						if(argLength < 3){
+							// Error: not enough args.
+							console.log("ERROR: Not enough args specified to change user limit.");
+						} else {
+							if(isNaN(inputArray[2])) console.log("ERROR: Limit arg \""+inputArray[2]+"\" is not a number"); // Error
+							else channel.user_limit = inputArray[2];
+						}
 						break;
 					case 'b':
 						channel.ban_mask += inputArray[2];
@@ -212,6 +219,7 @@ var chanMode = function(inputArray, params){
 						break;
 					default:
 						// Error: unrecognized option flag.
+						console.log("ERROR: Unrecognized option flag \""+operation[i]+"\" --ignored.");
 				}
 			}
 		} else if(operation[0] === '-'){
