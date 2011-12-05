@@ -234,6 +234,9 @@ var joinchan = function(userdata, params){
 };
 
 var part = function(thisuser, params) {
+    if (params == undefined) {
+        return;
+    }
     var thisnick = thisuser.nick;
     var chans = params.split(','); //channel(s) to leave
     var chan;
