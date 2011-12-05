@@ -17,11 +17,12 @@ function checkForSend(input, event){
 		// Forward slash "/" denotes that the user is specifying a command.
 		if(msg[0] == '/'){
 		    sendString = msg.slice(1); // remove the forward slash.
+		    input.value = null;
 		} else if(currentnick != nick){
 			sendString = "NICK " + nick;
 			currentnick = nick;
 		} else {
-			sendString = "PRIVMSG " + input.id + " " + nick  + " " +  msg;
+			sendString = "PRIVMSG " + input.id + " " + msg;
 			input.value = null;
 		}
 		console.log("to server: " + sendString);
@@ -60,14 +61,7 @@ function showChat(room){
 }
 
 function beginChat(socket){
-
-    //document.body = document.createElement("body");                                                               
-
-    showChat('cs455');
-    //showChat('zinkem');
-    //showChat('kali');
-
-
+    socket.emit('data', "JOIN #cs455"); 
 }
 
 
@@ -171,8 +165,10 @@ var privmsg = function(user, params){
     var chatbox = document.getElementById(chan_name);
     var inputbox = document.getElementById(chan);
     
+    var username = user.slice(1);
+
     var newDiv = document.createElement('div');
-    newDiv.innerHTML = content + "<br/>";
+    newDiv.innerHTML = "[" + username + "]" + content + "<br/>";
     chatbox.insertBefore(newDiv, inputbox);
     
     var chatboxchildren = chatbox.children;
@@ -188,6 +184,8 @@ var who = function(thisuser, params){
 var nick = function(thisuser, params){
 };
 var joinchan = function(thisuser, params){
+    console.log(thisuser + " & " + params);
+    showChat(params.slice(1));
 };
 var part = function(thisuser, pararms){
 };
