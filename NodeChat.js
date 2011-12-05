@@ -378,9 +378,15 @@ socket.sockets.on('connection', function(client){
 		}
 
 		a = fullcommand.indexOf(' '); // find index of next space.
-		var comtype = fullcommand.slice(0, a);
-		var params = fullcommand.slice(a+1, fullcommand.length);
-
+		console.log(a);
+		if(a > 0){
+		    var comtype = fullcommand.slice(0, a);
+		    var params = fullcommand.slice(a+1, fullcommand.length);
+		} else {
+		    var comtype = fullcommand;
+		    var params = undefined;
+		}
+		
 		console.log(params);
 
 		comtype = comtype.toUpperCase();
