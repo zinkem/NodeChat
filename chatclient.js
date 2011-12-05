@@ -178,8 +178,10 @@ var privmsg = function(user, params){
 
     if(sender == currentnick){
 	var username = chan;
+	var other = sender;
     } else {
 	var username = sender;
+	var other = chan;
     }
 
     var chatbox = document.getElementById(chan_name);
@@ -192,6 +194,9 @@ var privmsg = function(user, params){
 	    chatbox = document.getElementById("#user "+ username);	    
 	}
 	inputbox = document.getElementById(username);
+	if(username == currentnick){
+	    inputbox.setAttribute('id', other);
+	}
     }
 
     var newDiv = document.createElement('div');
