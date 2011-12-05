@@ -52,7 +52,6 @@ function showChat(room){
     sendForm.id = "#" + room;
     sendForm.className = "sendChatBox";
     sendForm.setAttribute("onKeyPress", "checkForSend(this, event)");
-    sendForm.setAttribute("size", "150");
     newDiv.appendChild(sendForm);
     
     document.body.appendChild(newDiv);
