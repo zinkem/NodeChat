@@ -299,6 +299,10 @@ var topic = function(user, params){
     newDiv.innerHTML = user.slice(1) + " set topic to \"" + t + "\"";
     chatbox.insertBefore(newDiv, inputbox);
 
+    var chatboxchildren = chatbox.children;
+    if(chatboxchildren.length > linesToDisplay+2)
+	chatbox.removeChild(chatboxchildren.item(1));
+
 }
 
 var nocommand = function(comtype){
