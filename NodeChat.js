@@ -187,15 +187,13 @@ var userMode = function(userdata, inputArray){
 	if(!userDataWithNick){
 		// Error: No user with given name.
 		console.log("ERROR: Can't find user \""+userNick+"\"!");
-	} else {
+	} else if(inputArray.length < 1){
 		var operation = inputArray[1];
 		var argLength = inputArray.length;
 		var userModes = userDataWithNick.mode;
-		console.log("Found channel \""+channelName+"\"!"); // --- Debugging print.
+		console.log("Found user \""+userNick+"\"!"); // --- Debugging print.
 		if(operation.length > 2) console.log("This IRC only processes one mode change at a time.");
 		if(operation[0] === '+'){
-			console.log(inputArray); // --- Debugging print.
-			//add
 			switch(operation[1]){
 				case 'o':
 					// Implemented in channel modes.
@@ -214,7 +212,6 @@ var userMode = function(userdata, inputArray){
 					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
 			}
 		} else if(operation[0] === '-'){
-			//subtract
 			switch(operation[1]){
 				case 'o':
 					break;
@@ -244,7 +241,7 @@ console.log(userdata.nick);// testing
 	if(!channel){
 		// Error: No channel with given name.
 		console.log("ERROR: Can't find channel \""+channelName+"\"!");
-	} else {
+	} else if(inputArray.length < 1){
 		var operation = inputArray[1];
 		var argLength = inputArray.length;
 		var channelModes = channel.mode;
