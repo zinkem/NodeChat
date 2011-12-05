@@ -35,9 +35,6 @@ function checkForSend(input, event){
 var linesToDisplay = 14;
 function showChat(room){
 
-    //var txtFile = new XMLHttpRequest();
-
-    var lines = [];// = txtFile.responseText.split("\n");
     var i;
     var newDiv = document.createElement("div");
     var chatText = '<h1>#' + room + '</h1>';
@@ -181,9 +178,21 @@ var who = function(thisuser, params){
 };
 var nick = function(thisuser, params){
 };
-var joinchan = function(thisuser, params){
-    console.log(thisuser + " & " + params);
-    showChat(params.slice(1));
+var joinchan = function(user, params){
+    console.log(user + " & " + params);
+    
+    var chan_name = params.slice(1);
+    var inputbox = document.getElementById(params);
+    var chatbox = document.getElementById(chan_name);
+
+    if(chatbox == undefined){
+	showChat(params.slice(1));
+    } else {
+	var newDiv = document.createElement('div');
+	newDiv.innerHTML = user.slice(1) + " entered " + params;
+	chatbox.insertBefore(newDiv, inputbox);
+    }
+
 };
 var part = function(thisuser, pararms){
 };
