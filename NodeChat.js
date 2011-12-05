@@ -100,7 +100,7 @@ var privmsg = function(user, params) {
     var sendmsg = ":" + user.nick + " PRIVMSG " + params;
     console.log(sendmsg);
 
-    for(i = 0; i < dest.length; i++){
+    for(var i in dest){
 	dest[i].socket.emit('message', sendmsg);
     }
 
