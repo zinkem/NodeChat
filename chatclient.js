@@ -120,7 +120,7 @@ function init(){
 		joinchan(thisuser, params);
 		break;
 	    case "PART":
-		part(thisuser, pararms);
+		part(thisuser, params);
 		break;
 	    case "MODE":
 		mode(params);
@@ -216,19 +216,16 @@ var joinchan = function(user, params){
     }
 
 };
-var part = function(thisuser, pararms){
+var part = function(thisuser, params){
     console.log(thisuser + " & " + params);
     var user = thisuser.slice(1);
     var chan = params.slice(1);
     var inputbox = document.getElementById(params);
     var chatbox = document.getElementById(chan);
 
-    if (thisuser == currentnick) {
-        if (chatbox) {
-            document.removeNamedItem(chatbox);
-        }
+    if (thisuser.nick == currentnick) {
         if (inputbox) {
-            document.removeNamedItem(inputbox);
+            document.body.deleteChild(inputbox);
         }
     } else {
         if (chatbox == undefined) {
