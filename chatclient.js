@@ -189,6 +189,7 @@ var privmsg = function(user, params){
 
     if(chatbox == null){
 	chatbox = document.getElementById("#user "+ username);
+	inputbox = document.getElementById(username);
     }
 
     if(chatbox == null && chan[0] != '#'){
