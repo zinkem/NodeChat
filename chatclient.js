@@ -22,8 +22,8 @@ function checkForSend(input, event){
 			sendString = "NICK " + nick;
 			currentnick = nick;
 		} else {
-			sendString = "PRIVMSG " + input.id + " " + msg;
-			input.value = null;
+		    sendString = "PRIVMSG " + input.id + " " + msg;
+		    input.value = null;
 		}
 		console.log("to server: " + sendString);
 		socket.emit('data', sendString);
@@ -34,6 +34,8 @@ function checkForSend(input, event){
 
 var linesToDisplay = 14;
 function showChat(room){
+
+
 
     var i;
     var newDiv = document.createElement("div");
@@ -49,7 +51,12 @@ function showChat(room){
     
     var sendForm = document.createElement("input");
     sendForm.placeholder = "Type here and hit enter to send a message to  #" + room;
-    sendForm.id = "#" + room;
+
+    if(room.split(' ').length == 2)
+	sendForm.id = room.split(' ')[1];
+    else
+	sendForm.id = '#' + room;
+
     sendForm.className = "sendChatBox";
     sendForm.setAttribute("onKeyPress", "checkForSend(this, event)");
     newDiv.appendChild(sendForm);
@@ -154,14 +161,31 @@ var privmsg = function(user, params){
     var chan = params.slice(0, a);
     var chan_name = params.slice(1, a);
     var content = params.slice(a);
+
     
+    var sender = user.slice(1);
+    var rcvr = chan;
+
+    if(sender == currentnick){
+	var username = chan;
+    } else {
+	var username = sender;
+    }
+
     var chatbox = document.getElementById(chan_name);
     var inputbox = document.getElementById(chan);
-    
-    var username = user.slice(1);
+
+    if(chatbox == null && chan[0] != '#'){
+	chatbox = document.getElementById("#user "+ username);
+	if(chatbox == null){
+	    showChat("#user " + username);
+	    chatbox = document.getElementById("#user "+ username);	    
+	}
+	inputbox = document.getElementById(username);
+    }
 
     var newDiv = document.createElement('div');
-    newDiv.innerHTML = "[" + username + "]" + content + "<br/>";
+    newDiv.innerHTML = "[" + sender + "]" + content + "<br/>";
     chatbox.insertBefore(newDiv, inputbox);
     
     var chatboxchildren = chatbox.children;

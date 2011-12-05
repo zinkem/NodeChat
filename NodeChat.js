@@ -58,7 +58,7 @@ function chanData() {
     this.name = "";
 	this.topic = "";
     this.users = []; // userData[]
-	this.invited = []; // Invited users. Indices are nicks, values are userData.
+	this.invited = []; // Invited users. Indices are nicks, values are booleans.
 	this.mode = new channelModeData();
 	return this; // need these return statements, otherwise nothing is passed back.
 }
@@ -96,7 +96,23 @@ var privmsg = function(user, params) {
     console.log(params);
 
     var channel = params.split(' ')[0];
-    var dest = channels[channel].users 
+
+    if(channel[0] === '#'){
+	if(channels[channel] != undefined){
+	    var dest = channels[channel].users;
+	}
+    } else {
+	var dest = [];
+	if(clients[channel] != undefined){
+	    dest[channel] = clients[channel];
+	}
+	
+	if(clients[user.nick] != undefined){
+	    dest[user.nick] = clients[user.nick];
+	}
+
+    }
+
     var sendmsg = ":" + user.nick + " PRIVMSG " + params;
     console.log(sendmsg);
 
@@ -300,38 +316,37 @@ var user = function(userdata, params){
 };
 
 var invite = function(userdata, params){
-	console.log("INVITE: "+params);
-	paramArray = params.split(/\s+/);
-	if(paramArray.length != 2){
-		// Incorrect number of args.
-		console.log("ERROR: Incorrect number of args!");
-	} else if(paramArray[0] == userdata.nick && null != clients[paramArray[0]]){
-		var channelName = paramArray[1];
-		var channel = channels[channelName];
-		if(null != channel){
-			var channelModes = channel.mode;
-			if(!channelModes.invite_only_chan){
-
-				// Invite user...how?
-
-			} else {
-				// If channel is an "invite only" channel, check that the
-				// inviting user is an operator of that channel.
-				if(userData.mode.operatorOf[channelName] != null){
-					
-					// Inivte user...how?
-
-				} else {
-					// Error: Inviter does not have privileges to invite others to this
-					// "invite only" channel.
-					console.log("ERROR: You don't have privileges to invite others to \""+channelName+"\" -- invite_only_channel.");
-				}
-			}
+    console.log("INVITE: "+params);
+    paramArray = params.split(/\s+/);
+    if(paramArray.length != 2){
+	// Incorrect number of args.
+	console.log("ERROR: Incorrect number of args!");
+    } else if(paramArray[0] == userdata.nick && null != clients[paramArray[0]]){
+	var channelName = paramArray[1];
+	var channel = channels[channelName];
+	if(null != channel){
+	    var channelModes = channel.mode;
+	    if(!channelModes.invite_only_chan){
+		
+		// Invite user...how?
+		channel.invited[paramArray[0]] = true;
+	    } else {
+		// If channel is an "invite only" channel, check that the
+		// inviting user is an operator of that channel.
+		if(userData.mode.operatorOf[channelName] != null){
+		    
+		    // Inivte user...how?
+		    channel.invited[paramArray[0]] = true;
 		} else {
-			// create channel with name <channelName>
-			// Use join? Something else?
+		    // Error: Inviter does not have privileges to invite others to this
+		    // "invite only" channel.
+		    console.log("ERROR: You don't have privileges to invite others to \""+channelName+"\" -- invite_only_channel.");
 		}
-	} else console.log("ERROR: Either the user \""+params[0]+"\" doesn't exist OR You attempted to invite yourself.");
+	    }
+	} else {
+	    console.log("ERROR: Channel does not exist to invite to");
+	}
+    } else console.log("ERROR: Either the user \""+params[0]+"\" doesn't exist OR You attempted to invite yourself.");
 };
 
 var userMode = function(userdata, inputArray){
