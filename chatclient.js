@@ -224,6 +224,8 @@ var invite = function(thisuser, params){
 var kick = function(thisuser, params){
 };
 var quit = function(thisuser, params){
+    
+
 };
 var nocommand = function(comtype){
     console.log("No command: " + comtype);
