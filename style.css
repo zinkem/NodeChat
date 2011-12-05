@@ -1,0 +1,22 @@
+body {
+    background-color: #999999;
+    color: #111111;
+    font-family:Helvetica, "Lucidia Sans Unicode", "Trebuchet MS";
+}
+
+
+.chatBox {
+    background-color: #cccccc;
+    margin-bottom: 20px;
+
+}
+
+
+.sendChatBox {
+
+    background-color: #666666;
+    color:#cccccc;
+
+    width: 100%;
+
+}

@@ -21,7 +21,18 @@ webServ = http.createServer(function(req, res){
 		}
 
 		fs.readFile(abspath, "binary", function(err, file){
-			res.writeHead(200, {"Content-Type":"text/html"});
+
+			var filetype = path.extname(abspath);
+			
+			if(filetype == '.html'){
+			    res.writeHead(200, {"Content-Type":"text/html"});
+			} else if(filetype == '.js'){
+			    res.writeHead(200, {"Content-Type":"text/script"});
+			} else if(filetype == '.css'){
+			    res.writeHead(200, {"Content-Type":"text/css"});
+			} else{
+			    res.writeHead(200, {"Content-Type":"text"});
+			}
 			res.write(file, "binary");
 			res.end('');
 		    });
