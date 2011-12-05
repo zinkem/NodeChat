@@ -359,6 +359,18 @@ var part = function(thisuser, params) {
             console.log("Deleting user " + thisnick + " from channel " + chan);
             delete channels[chan].users[thisnick];
         }
+	
+	//remove channel if no users left
+	var size = 0;
+	for(i in channels[chan].users){
+	    if(channels[chan].users[i] != undefined){
+		size++;
+	    }
+	}
+
+	if(size <= 0){
+	    delete channels[chan];
+	}
     }
 };
 
