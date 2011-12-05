@@ -178,9 +178,9 @@ var joinchan = function(userdata, params){
 	channels[chan].name = chan;
     }
 
-    channels[chan].users.push(userdata);
-    userdata.channels.push(channels[chan]);
-
+    channels[chan].users.push(userdata); // -------------------- Shouldn't this be channels[chan].users[userdata.nick] = userdata; ?
+    userdata.channels.push(channels[chan]); // ----------------- same deal, userdata.channels[chan] = channels[chan]; ?
+												// ------------- If not, this ruins the associative array methodology we agreed on.
     for(var i in channels[chan].users){
 	var peer = channels[chan].users[i];
 	peer.socket.emit('message', ":" + userdata.nick + " JOIN " + chan);
@@ -213,6 +213,41 @@ var part = function(thisuser, params) {
 };
 
 var quit = function(userdata, params){
+};
+
+var invite = function(userdata, params){
+	console.log(params);
+	paramArray = params.split(/\s+/);
+	if(paramArray.length != 2){
+		// Incorrect number of args.
+		console.log("ERROR: Incorrect number of args!");
+	} else if(params[0] == userdata.nick && null != clients[params[0]]){
+		var channelName = params[1];
+		var channel = channels[channelName];
+		if(null != channel){
+			var channelModes = channel.mode;
+			if(!channelModes.invite_only_chan){
+
+				// Invite user...how?
+
+			} else {
+				// If channel is an "invite only" channel, check that the
+				// inviting user is an operator of that channel.
+				if(userData.mode.operatorOf[channelName] != null){
+					
+					// Inivte user...how?
+
+				} else {
+					// Error: Inviter does not have privileges to invite others to this
+					// "invite only" channel.
+					console.log("ERROR: You don't have privileges to invite others to \""+channelName+"\" -- invite_only_channel.");
+				}
+			}
+		} else {
+			// create channel with name <channelName>
+			// Use join? Something else?
+		}
+	} else console.log("ERROR: Either the user \""+params[0]+"\" doesn't exist OR You attempted to invite yourself.");
 };
 
 var userMode = function(userdata, inputArray){
