@@ -190,6 +190,41 @@ var joinchan = function(userdata, params){
 var quit = function(userdata, params){
 };
 
+var invite = function(userdata, params){
+	console.log(params);
+	paramArray = params.split(/\s+/);
+	if(paramArray.length != 2){
+		// Incorrect number of args.
+		console.log("ERROR: Incorrect number of args!");
+	} else if(params[0] == userdata.nick && null != clients[params[0]]){
+		var channelName = params[1];
+		var channel = channels[channelName];
+		if(null != channel){
+			var channelModes = channel.mode;
+			if(!channelModes.invite_only_chan){
+
+				// Invite user...how?
+
+			} else {
+				// If channel is an "invite only" channel, check that the
+				// inviting user is an operator of that channel.
+				if(userData.mode.operatorOf[channelName] != null){
+					
+					// Inivte user...how?
+
+				} else {
+					// Error: Inviter does not have privileges to invite others to this
+					// "invite only" channel.
+					console.log("ERROR: You don't have privileges to invite others to \""+channelName+"\" -- invite_only_channel.");
+				}
+			}
+		} else {
+			// create channel with name <channelName>
+			// Use join? Something else?
+		}
+	} else console.log("ERROR: Either the user \""+params[0]+"\" doesn't exist OR You attempted to invite yourself.");
+};
+
 var userMode = function(userdata, inputArray){
 	var userNick = inputArray[0];
 	var userDataWithNick = clients[userNick];
