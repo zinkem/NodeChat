@@ -241,9 +241,33 @@ var nick = function(userdata, nick){
 	var c = userdata.channels[i];
 
 	c.users[nick] = userdata;
-	delete c.users[oldnick] 
-    }
+	delete c.users[oldnick]; 
 
+	//change invited nick
+	if(c.invited[oldnick]){
+	    c.invited[nick] = c.invited[oldnick];
+	    delete c.invited[oldnick];
+	}
+
+	//change nick for ops/ban/voice
+	var m = c.mode;
+
+	if(m.operators[oldnick]){
+	    m.operators[nick] = m.operators[oldnick];
+	    delete m.operators[oldnick];
+	}
+
+	if(m.ban_mask[oldnick]){
+	    m.ban_mask[nick] = m.ban_mask[oldnick];
+	    delete m.ban_mask[oldnick];
+	}
+
+	if(m.voice[oldnick]){
+	    m.voice[nick] = m.voice[oldnick];
+	    delete m.voice[oldnick];
+	}
+
+    }
     
     if(clients[oldnick] != undefined){
 	delete clients[oldnick];
@@ -272,7 +296,12 @@ var joinchan = function(userdata, params){
 	if(channels[chan].mode.private_chan ||
 	   channels[chan].mode.invite_only_chan){
 	    //check to see if user is invited, and return if not
-	    console.log("");
+
+	    if(channels[chan].invited[userdata.nick] == false){
+		console.log("user not invited");
+		//return error?
+		return;
+	    }
 	}
     }
 
