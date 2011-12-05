@@ -119,7 +119,7 @@ function init(){
 				part(someNick, params);
 				break;
 			case "MODE":
-				mode(params);
+				mode(someNick, params);
 				break;
 			case "TOPIC":
 				topic(someNick, params);
@@ -234,6 +234,7 @@ var part = function(thisuser, params){
     }
 };
 var mode = function(thisuser, params){
+	console.log(params);
 };
 var list = function(thisuser, params){
 };

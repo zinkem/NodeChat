@@ -269,12 +269,14 @@ var invite = function(userdata, params){
 };
 
 var userMode = function(userdata, inputArray){
+	var returnMsg = "blah";
 	var userNick = inputArray[0];
 	var userDataWithNick = clients[userNick];
 	if(!userDataWithNick){
 		// Error: No user with given name.
-		console.log("ERROR: Can't find user \""+userNick+"\"!");
-	} else if(inputArray.length < 1){
+		returnMsg = "ERROR: Can't find user \""+userNick+"\"!";
+		console.log(returnMsg);
+	} else if(inputArray.length > 1){
 		var operation = inputArray[1];
 		var argLength = inputArray.length;
 		var userModes = userDataWithNick.mode;
@@ -293,10 +295,13 @@ var userMode = function(userdata, inputArray){
 					break;
 				case 'i':
 					userModes.invisible = true;
+					returnMsg = "SUCCESS: User \""+userDataWithNick.nick+"\" changed invisibility to "+userDataWithNick.mode.invisible;
+					console.log(returnMsg);
 					break;
 				default:
 					// Error: unrecognized option flag.
-					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
+					returnMsg = "ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.";
+					console.log(returnMsg);
 			}
 		} else if(operation[0] === '-'){
 			switch(operation[1]){
@@ -310,13 +315,27 @@ var userMode = function(userdata, inputArray){
 					break;
 				case 'i':
 					userModes.invisible = false;
+					returnMsg = "SUCCESS: User \""+userDataWithNick.nick+"\" changed invisibility to "+userDataWithNick.mode.invisible;
+					console.log(returnMsg);
 					break;
 				default:
-					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
+					returnMsg = "ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.";
+					console.log("+3+");
 			}
 		} else {
 			//error;
-			console.log("Mode flag must be preceeded by +|-");
+			returnMsg = "ERROR: Mode flag must be preceeded by +|-";
+			console.log("+4+");
+		}
+	}
+
+	//emit returnMsg.
+	for (j in userDataWithNick.channels){
+		var tmpChanName = j;
+		for (i in channels[j].users) {
+			var peer = channels[j].users[i];
+			console.log("ZOMG! +++++ "+ ":" + userDataWithNick.nick + " MODE "+returnMsg);
+			peer.socket.emit('message', ":" + userDataWithNick.nick + " MODE "+returnMsg);
 		}
 	}
 };
@@ -468,8 +487,8 @@ console.log(userdata.nick);// testing
 
 var mode = function(thisuser, params){
 	var inputArray = params.split(/\s+/);
+console.log("mode function splitter: "+params[0]);
 	if(params[0] === '#'){
-		console.log(inputArray[0]);
 		chanMode(thisuser, inputArray);
 	} else {
 		userMode(thisuser, inputArray);
@@ -499,7 +518,7 @@ socket.sockets.on('connection', function(client){
 		}
 
 		a = fullcommand.indexOf(' '); // find index of next space.
-		console.log(a);
+		//console.log(a);
 		if(a > 0){
 		    var comtype = fullcommand.slice(0, a);
 		    var params = fullcommand.slice(a+1, fullcommand.length);
@@ -508,7 +527,7 @@ socket.sockets.on('connection', function(client){
 		    var params = undefined;
 		}
 		
-		console.log(params);
+		//console.log(params);
 
 		comtype = comtype.toUpperCase();
 
