@@ -229,14 +229,18 @@ var part = function(thisuser, params) {
 var quit = function(userdata, params){
 };
 
+var user = function(userdata, params){
+
+};
+
 var invite = function(userdata, params){
-	console.log(params);
+	console.log("INVITE: "+params);
 	paramArray = params.split(/\s+/);
 	if(paramArray.length != 2){
 		// Incorrect number of args.
 		console.log("ERROR: Incorrect number of args!");
-	} else if(params[0] == userdata.nick && null != clients[params[0]]){
-		var channelName = params[1];
+	} else if(paramArray[0] == userdata.nick && null != clients[paramArray[0]]){
+		var channelName = paramArray[1];
 		var channel = channels[channelName];
 		if(null != channel){
 			var channelModes = channel.mode;

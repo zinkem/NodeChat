@@ -77,10 +77,8 @@ function init(){
     socket.emit('data', "NICK " + currentnick);
 
     //need to wait on a response here... might need to do something special?
-
-	//join default room here?
     
-    socket.emit('data', "USER " + currentnick );
+    socket.emit('data', "USER " + currentnick + " " + domain + " " + domain + " :Tyler Durden");
 
 
     socket.on('INIT', function(data){
@@ -89,59 +87,57 @@ function init(){
     
     socket.on('message', function(data){
 	    
-	    console.log('message: ' + data);
+	    console.log('Full message from server: ' + data);
 	    
 	    
 	    var a = data.indexOf(' ');
-	    var currentuid = data.slice(0, a);
+		someNick = data.slice(0, a); // Pull some nickname off of message.
 	    var fullcommand = data.slice(a+1, data.length);
 	    a = fullcommand.indexOf(' '); // find index of next space.
 	    var comtype = fullcommand.slice(0, a);
 	    var params = fullcommand.slice(a+1, fullcommand.length);
 	    
-	    console.log(fullcommand);
-	    
-	    thisuser = currentuid;
+	    console.log("Client received command: "+fullcommand);
 	    
 	    switch(comtype){
-	    case "USER":
-		user(thisuser, params);
-		break;
-	    case "PRIVMSG":
-		privmsg(thisuser, params);				
-		break;
-	    case "WHO":
-		who(thisuser, params);
-		break;
-	    case "NICK":
-		nick(thisuser, params);
-		break;
-	    case "JOIN":
-		joinchan(thisuser, params);
-		break;
-	    case "PART":
-		part(thisuser, params);
-		break;
-	    case "MODE":
-		mode(params);
-		break;
-	    case "TOPIC":
-		topic(thisuser, params);
-		break;
-	    case "LIST":
-		list(thisuser, params);
-		break;
-	    case "INVITE":
-		invite(thisuser, params);
-		break;
-	    case "KICK":
-		invite(thisuser, params);
-		break;
-	    case "QUIT":
-		quit(thisuser, params);
-		break;
-	    default:
-		nocommand(comtype);
+			case "USER":
+				user(someNick, params);
+				break;
+			case "PRIVMSG":
+				privmsg(someNick, params);				
+				break;
+			case "WHO":
+				who(someNick, params);
+				break;
+			case "NICK":
+				nick(someNick, params);
+				break;
+			case "JOIN":
+				joinchan(someNick, params);
+				break;
+			case "PART":
+				part(someNick, params);
+				break;
+			case "MODE":
+				mode(params);
+				break;
+			case "TOPIC":
+				topic(someNick, params);
+				break;
+			case "LIST":
+				list(someNick, params);
+				break;
+			case "INVITE":
+				invite(someNick, params);
+				break;
+			case "KICK":
+				invite(someNick, params);
+				break;
+			case "QUIT":
+				quit(someNick, params);
+				break;
+			default:
+				nocommand(comtype);
 	    }
 	    
 	});
@@ -242,6 +238,7 @@ var mode = function(thisuser, params){
 var list = function(thisuser, params){
 };
 var invite = function(thisuser, params){
+	console.log(thisuser.nick+" & "+params);
 };
 var kick = function(thisuser, params){
 };
