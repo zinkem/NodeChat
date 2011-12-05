@@ -246,7 +246,7 @@ var part = function(thisuser, params){
     if (thisuser.nick == currentnick) {
         chatbox = document.body.getElementById(chan);
         if (chatbox) {
-            document.body.deleteChild(chatbox);
+            document.body.removeChild(chatbox);
         }
     } else {
         if (chatbox == undefined) {

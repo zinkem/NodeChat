@@ -343,15 +343,16 @@ var part = function(thisuser, params) {
             console.log("Deleting channel " + chan + " from user " + thisnick);
             delete thisuser.channels[chan];
         }
+	
+	//this happens first so parting user gets the part message
+        for (i in channels[chan].users) {
+	    var peer = channels[chan].users[i];
+	    peer.socket.emit('message', ":" + thisuser.nick + " PART " + chan);
+        }
 
         if (channels[chan].users[thisnick]) {
             console.log("Deleting user " + thisnick + " from channel " + chan);
             delete channels[chan].users[thisnick];
-        }
-
-        for (i in channels[chan].users) {
-	    var peer = channels[chan].users[i];
-	    peer.socket.emit('message', ":" + thisuser.nick + " PART " + chan);
         }
     }
 };
