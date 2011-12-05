@@ -73,7 +73,7 @@ function channelModeData(){
 	this.moderated_chan = false; // boolean
 	this.user_limit = null; // integer.
 	this.ban_mask = []; // array of banned users (nicks)?
-	this.voice = false; // boolean
+	this.voice = []; // array of booleans, indices are nicknames (strings)
 	this.key = ""; // string?
 	return this; // need these return statements, otherwise nothing is passed back.
 }
@@ -494,7 +494,19 @@ var chanMode = function(userdata, inputArray){
 					}
 					break;
 				case 'v':
-					channelModes.voice = true;
+					if(argLength != 3){
+						returnMsg = "ERROR: No user specified.";
+						console.log(returnMsg);
+					} else {
+						var user = channel.users[inputArray[2]]; // find user in this channel.
+						if(user != null){
+							channelModes.voice[user.name] = true; // if user found in channel, give voice.
+							returnMsg = "SUCCESS: User \""+user.name+"\" now has a voice.";
+						} else {
+							returnMsg = "ERROR: Could not find user \""+inputArray[2]+"\" in channel \""+channelName+"\".";
+							console.log(returnMsg);
+						}
+					}
 					break;
 				case 'k':
 					channelModes.key = inputArray[2]; // need to do more funky stuff and discuss necessity.
@@ -569,8 +581,19 @@ var chanMode = function(userdata, inputArray){
 					}
 					break;
 				case 'v':
-					channelModes.voice = false;
-					returnMsg = "SUCCESS: voice for channel \""+channelName+"\" set to "+channelModes.user_limit;
+					if(argLength != 3){
+						returnMsg = "ERROR: No user specified.";
+						console.log(returnMsg);
+					} else {
+						var user = channel.users[inputArray[2]]; // find user in this channel.
+						if(user != null){
+							channelModes.voice[user.name] = false; // if user found in channel, give voice.
+							returnMsg = "SUCCESS: User \""+user.name+"\" now has NO voice.";
+						} else {
+							returnMsg = "ERROR: Could not find user \""+inputArray[2]+"\" in channel \""+channelName+"\".";
+							console.log(returnMsg);
+						}
+					}
 					break;
 				case 'k':
 					// some magic yet to be done.
@@ -584,6 +607,9 @@ var chanMode = function(userdata, inputArray){
 			returnMsg = "Mode flag must be preceeded by +|-";
 			console.log(returnMsg);
 		}
+	} else {
+		returnMsg = "ERROR: Not enough args or some other error.";
+		console.log(returnMsg);
 	}
 
 	//emit returnMsg to all user in current channel.
