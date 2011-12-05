@@ -66,7 +66,7 @@ function channelModeData(){
 }
 
 function userModeData(){
-	this.invisibleTo = []; // Array of channl names user is invisible to?
+	this.invisible = false; // boolean
 	this.operatorOf = []; // Array of channel names user is operator of?
 	return this; // need these return statements, otherwise nothing is passed back.
 }
@@ -186,7 +186,7 @@ var userMode = function(userdata, inputArray){
 	var userDataWithNick = clients[userNick];
 	if(!userDataWithNick){
 		// Error: No user with given name.
-		console.log("ERROR: Can't find user \""+userNick"\"!");
+		console.log("ERROR: Can't find user \""+userNick+"\"!");
 	} else {
 		var operation = inputArray[1];
 		var argLength = inputArray.length;
@@ -207,7 +207,7 @@ var userMode = function(userdata, inputArray){
 					// Wont be implemented.
 					break;
 				case 'i':
-					//userModes.invisibleTo[<some_channel_name>] = <some_channel>;
+					userModes.invisible = true;
 					break;
 				default:
 					// Error: unrecognized option flag.
@@ -219,11 +219,13 @@ var userMode = function(userdata, inputArray){
 				case 'o':
 					break;
 				case 'w':
+					// Wont be implemented.
 					break;
 				case 's':
+					// Wont be implemented.
 					break;
 				case 'i':
-					userModes.invite_only_chan = false;
+					userModes.invisible = false;
 					break;
 				default:
 					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
