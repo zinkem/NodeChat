@@ -178,9 +178,9 @@ var joinchan = function(userdata, params){
 	channels[chan].name = chan;
     }
 
-    channels[chan].users.push(userdata); // -------------------- Shouldn't this be channels[chan].users[userdata.nick] = userdata; ?
-    userdata.channels.push(channels[chan]); // ----------------- same deal, userdata.channels[chan] = channels[chan]; ?
-												// ------------- If not, this ruins the associative array methodology we agreed on.
+    channels[chan].users[userdata.nick] = userdata;
+    userdata.channels[chan] = channels[chan];
+						
     for(var i in channels[chan].users){
 	var peer = channels[chan].users[i];
 	peer.socket.emit('message', ":" + userdata.nick + " JOIN " + chan);
