@@ -73,12 +73,22 @@ function init(){
 
     socket = new io.connect(domain);
 
+    //create system message box
+    var newDiv = document.createElement("div");
+    var sysText = 'system messages:';
+    newDiv.id = "system";
+    newDiv.className = "system";
+    document.body.appendChild(newDiv);
+    
     //create namefield and default nick
     var nameField = document.createElement("input");
     nameField.value = currentnick = "guest" + Math.floor(Math.random()*1001); //deflt username
     nameField.id = "nickField";
     nameField.setAttribute("onKeyPress", "checkForSend(this, event)");
     document.body.appendChild(nameField);
+
+
+
 
     socket.emit('data', "NICK " + currentnick);
 
