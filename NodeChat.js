@@ -187,6 +187,45 @@ var joinchan = function(userdata, params){
     }
 };
 
+var part = function(thisuser, params) {
+    var thisnick = thisuser.nick;
+    var chans = params.split(','); //leaving multiple channels
+    var chan;
+    var i;
+    for (i in chans) {
+        chan = chans[i];
+        console.log("PART Channel " + chan);
+        if (chan[0] != '#') {
+	    console.log("Invalid channel name: " + chan);
+	    //error to client?
+	    return;
+        }
+
+        //Below should just be delete thisuser.channels[chan],
+        //but channels is not an associate array!
+        for (i in thisuser.channels) {
+            if (thisuser.channels[i].name == chan) {
+                console.log("Deleting channel " + chan + " from user " + thisnick);
+                delete thisuser.channels[i];
+            }
+        }
+
+        //Below should just be delete channels[chan].users[thisnick],
+        //but channels is not an associate array!
+        for (i in channels[chan].users) {
+            if (channels[chan].users[i].nick == thisnick) {
+                console.log("Deleting user " + thisnick + " from channel " + chan);
+                delete channels[chan].users[i];
+            }
+        }
+
+        for (i in channels[chan].users) {
+	    var peer = channels[chan].users[i];
+	    peer.socket.emit('message', ":" + thisuser.nick + " PART " + chan);
+        }
+    }
+};
+
 var quit = function(userdata, params){
 };
 
@@ -490,7 +529,7 @@ socket.sockets.on('connection', function(client){
 		    joinchan(thisuser, params);
 		    break;
 		case "PART":
-		    part(thisuser, pararms);
+		    part(thisuser, params);
 		    break;
 		case "MODE":
 		    mode(thisuser, params);
