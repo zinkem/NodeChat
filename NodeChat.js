@@ -368,20 +368,20 @@ var userMode = function(userdata, inputArray){
 		if(operation.length > 2) console.log("This IRC only processes one mode change at a time.");
 		if(operation[0] === '+'){
 			switch(operation[1]){
-				case 'o':
-					// Implemented in channel modes.
-					break;
-				case 'w':
-					// Wont be implemented.
-					break;
-				case 's':
-					// Wont be implemented.
-					break;
 				case 'i':
 					userModes.invisible = true;
 					returnMsg = "SUCCESS: User \""+userDataWithNick.nick+"\" changed invisibility to "+userDataWithNick.mode.invisible;
 					console.log(returnMsg);
 					break;
+				case 'o':
+					// Implemented in channel modes.
+					//break;
+				case 'w':
+					// Wont be implemented.
+					//break;
+				case 's':
+					// Wont be implemented.
+					//break;
 				default:
 					// Error: unrecognized option flag.
 					returnMsg = "ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.";
@@ -389,19 +389,19 @@ var userMode = function(userdata, inputArray){
 			}
 		} else if(operation[0] === '-'){
 			switch(operation[1]){
-				case 'o':
-					break;
-				case 'w':
-					// Wont be implemented.
-					break;
-				case 's':
-					// Wont be implemented.
-					break;
 				case 'i':
 					userModes.invisible = false;
 					returnMsg = "SUCCESS: User \""+userDataWithNick.nick+"\" changed invisibility to "+userDataWithNick.mode.invisible;
 					console.log(returnMsg);
 					break;
+				case 'o':
+					//break;
+				case 'w':
+					// Wont be implemented.
+					//break;
+				case 's':
+					// Wont be implemented.
+					//break;
 				default:
 					returnMsg = "ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.";
 					console.log(returnMsg);
@@ -431,6 +431,9 @@ var chanMode = function(userdata, inputArray){
 	if(!channel){
 		// Error: No channel with given name.
 		returnMsg = "ERROR: Can't find channel \""+channelName+"\"!";
+		console.log(returnMsg);
+	} else if(channel.mode.operators[userdata.nick] == null){
+		returnMsg = "ERROR: \""+userdata.nick+"\" must be a moderator/operator of channel \""+channelName+"\" to make changes to the channel."
 		console.log(returnMsg);
 	} else if(inputArray.length > 1){
 		var operation = inputArray[1];
