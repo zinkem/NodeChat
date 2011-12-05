@@ -116,6 +116,9 @@ var who = function(thisuser, params) {
     var i;
     var thatuser;
     var sendmsg = ":" + thisuser.nick + " WHO";
+    if (!params) {
+       params = "";
+    }
     if (params[0] === '#') {
         if (channels[params]) {
             for (i in channels[params].users) {
