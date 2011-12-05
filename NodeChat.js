@@ -226,8 +226,11 @@ var joinchan = function(userdata, params){
     }
 
     if(channels[chan] == undefined){
-	channels[chan] = new chanData();
-	channels[chan].name = chan;
+		//create channel, add user as init operator.
+		channels[chan] = new chanData();
+		channels[chan].name = chan;
+		channels[chan].mode.operators[userdata.nick] = userdata;
+		userdata.mode.operatorOf[chan] = channels[chan];
     } else {
 	if(channels[chan].mode.private_chan ||
 	   channels[chan].mode.invite_only_chan){
