@@ -117,15 +117,20 @@ var who = function(thisuser, params) {
     if (!params) {
        params = "";
     }
-    (params, oper) = params.split(/\s+/);
+    var a = params.indexOf(' ');
+    if (a > 0) {
+        oper = params.slice(a+1, a+2);
+        params = params.slice(0, a);
+        console.log("params: " + params + " oper: " + oper);
+    }
     if (params[0] === '#') {
         if (channels[params] && !channels[params].mode.secret_chan) {
             for (i in channels[params].users) {
                 thatuser = channels[params].users[i];
-                if (!clients[thatuser].mode.invisible) {
+                if (!thatuser.mode.invisible) {
                     name = thatuser.nick;
-                    console.log(name);
                     if (oper === 'o' && channels[params].mode.operators[name]) {
+                        console.log(name);
                         sendmsg += " " + name;
                     }
                 }
@@ -145,14 +150,30 @@ var who = function(thisuser, params) {
             if (!clients[i].mode.invisible) {
                 name = clients[i].nick;
                 if (name.match(pattern)) {
-                    console.log(name);
-                    sendmsg += " " + name;
-                    foundusers = true;
+                    if (oper == "o") {
+                        var isOper = false;
+                        for (var temp in clients[i].mode.operatorOf) {
+                            isOper = true;
+                        }
+                        if (isOper) {
+                            console.log(name);
+                            sendmsg += " " + name;
+                            foundusers = true;
+                        }
+                    } else {
+                        console.log(name);
+                        sendmsg += " " + name;
+                        foundusers = true;
+                    }
                 }
             }
         }
         if (!foundusers) {
-            sendmsg += " no users matching pattern " + params;
+            if (oper == "o") {
+                sendmsg += " no opers matching pattern " + params;
+            } else {
+                sendmsg += " no users matching pattern " + params;
+            }
         }
     }
     thisuser.socket.emit('message', sendmsg);
