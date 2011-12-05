@@ -145,7 +145,12 @@ var who = function(thisuser, params) {
                 thatuser = channels[params].users[i];
                 if (!thatuser.mode.invisible) {
                     name = thatuser.nick;
-                    if (oper === 'o' && channels[params].mode.operators[name]) {
+                    if (oper === 'o') {
+                        if (channels[params].mode.operators[name]) {
+                            console.log(name);
+                            sendmsg += " " + name;
+                        }
+                    } else {
                         console.log(name);
                         sendmsg += " " + name;
                     }
