@@ -724,6 +724,25 @@ console.log("mode function splitter: "+params[0]);
 	}
 };
 
+var kick = function(thisuser, params){
+    console.log("Kick " + params);
+    var args = params.split(' ');
+    if(args.length != 2){
+	console.log("Kick: invalid args");
+	return;
+    }
+
+    if(channels[args[0]]){
+	var c = channels[args[0]];
+
+	if(c.users[args[1]]){
+	    var u = c.users[args[1]];
+	    part(u, args[0]);
+	}
+    }
+
+};
+
 var nocommand = function(com){
     console.log(com + ": not a recognized command");
 };
@@ -799,7 +818,7 @@ socket.sockets.on('connection', function(client){
 		    invite(thisuser, params);
 		    break;
 		case "KICK":
-		    invite(thisuser, params);
+		    kick(thisuser, params);
 		    break;
 		case "QUIT":
 		    quit(thisuser, params);
