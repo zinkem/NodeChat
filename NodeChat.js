@@ -199,13 +199,21 @@ var joinchan = function(userdata, params){
     if(channels[chan] == undefined){
 	channels[chan] = new chanData();
 	channels[chan].name = chan;
+    } else {
+	if(channels[chan].mode.private_chan ||
+	   channels[chan].mode.invite_only_chan){
+	    //check to see if user is invited, and return if not
+	    console.log("");
+	}
     }
 
+    //add user to channel, and add channel to user's channel list
     channels[chan].users[userdata.nick] = userdata;
     userdata.channels[chan] = channels[chan];
     
     console.log("join: " + userdata.channels.length + " " + chan);
 						
+    //broadcast to everyone in the channel that a user has joined
     for(var i in channels[chan].users){
 	var peer = channels[chan].users[i];
 	peer.socket.emit('message', ":" + userdata.nick + " JOIN " + chan);
