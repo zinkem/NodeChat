@@ -112,19 +112,23 @@ var who = function(thisuser, params) {
     var name = "";
     var i;
     var thatuser;
+    var oper = "";
     var sendmsg = ":" + thisuser.nick + " WHO";
     if (!params) {
        params = "";
     }
+    (params, oper) = params.split(/\s+/);
     if (params[0] === '#') {
-        if (channels[params]) {
+        if (channels[params] && !channels[params].mode.secret_chan) {
             for (i in channels[params].users) {
                 thatuser = channels[params].users[i];
-                //if (!clients[thatuser].mode.invisible) {
+                if (!clients[thatuser].mode.invisible) {
                     name = thatuser.nick;
                     console.log(name);
-                    sendmsg += " " + name;
-                //}
+                    if (oper === 'o' && channels[params].mode.operators[name]) {
+                        sendmsg += " " + name;
+                    }
+                }
             }
         } else {
             console.log("ERROR: Channel " + params + " not found!");
@@ -138,14 +142,14 @@ var who = function(thisuser, params) {
         }
         var foundusers = false;
         for (i in clients) {
-            //if (!clients[i].mode.invisible) {
+            if (!clients[i].mode.invisible) {
                 name = clients[i].nick;
                 if (name.match(pattern)) {
                     console.log(name);
                     sendmsg += " " + name;
                     foundusers = true;
                 }
-            //}
+            }
         }
         if (!foundusers) {
             sendmsg += " no users matching pattern " + params;
