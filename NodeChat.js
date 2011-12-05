@@ -744,6 +744,24 @@ var kick = function(thisuser, params){
 
 };
 
+var topic = function(thisuser, params){
+    var a = params.indexOf(' ');
+    var chan = params.slice(0, a);
+    var top = params.slice(a+1);
+
+    if(channels[chan] != undefined){
+	channels[chan].topic = top;
+
+	for(var i in channels[chan].users){
+	    var u = channels[chan].users[i];
+	    console.log( ':' + thisuser.nick + ' TOPIC ' + params);
+	    u.socket.emit('message', ':' + thisuser.nick + ' TOPIC ' + params);
+	}
+
+    }
+
+}
+
 var nocommand = function(com){
     console.log(com + ": not a recognized command");
 };

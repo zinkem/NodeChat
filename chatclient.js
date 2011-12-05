@@ -97,7 +97,7 @@ function init(){
 	    
 	    
 	    var a = data.indexOf(' ');
-		someNick = data.slice(0, a); // Pull some nickname off of message.
+	    someNick = data.slice(0, a); // Pull some nickname off of message.
 	    var fullcommand = data.slice(a+1, data.length);
 	    a = fullcommand.indexOf(' '); // find index of next space.
 	    var comtype = fullcommand.slice(0, a);
@@ -106,7 +106,7 @@ function init(){
 	    console.log("Client received command: "+fullcommand);
 	    
 	    switch(comtype){
-			case "USER":
+	    case "USER":
 				user(someNick, params);
 				break;
 			case "PRIVMSG":
@@ -137,7 +137,7 @@ function init(){
 				invite(someNick, params);
 				break;
 			case "KICK":
-				invite(someNick, params);
+				kick(someNick, params);
 				break;
 			case "QUIT":
 				quit(someNick, params);
@@ -243,11 +243,11 @@ var part = function(thisuser, params){
     var inputbox = document.getElementById(params);
     var chatbox = document.getElementById(chan);
 
-    if (thisuser.nick == currentnick) {
-        chatbox = document.body.getElementById(chan);
+    if (user == currentnick) {
+        chatbox = document.getElementById(chan);
         if (chatbox) {
             document.body.removeChild(chatbox);
-        }
+	}
     } else {
         if (chatbox == undefined) {
 	    showChat(chan);
@@ -287,6 +287,20 @@ var quit = function(thisuser, params){
     console.log(thisuser + "has quit");
 
 };
+var topic = function(user, params){
+    var a = params.indexOf(' ');
+    var chan = params.slice(1, a);
+    var t = params.slice(a+1);
+
+    var chatbox = document.getElementById(chan);
+    var inputbox = document.getElementById('#' + chan);
+
+    var newDiv = document.createElement('div');
+    newDiv.innerHTML = user.slice(1) + " set topic to \"" + t + "\"";
+    chatbox.insertBefore(newDiv, inputbox);
+
+}
+
 var nocommand = function(comtype){
     console.log("No command: " + comtype);
 };
