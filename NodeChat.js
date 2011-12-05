@@ -235,6 +235,16 @@ var nick = function(userdata, nick){
     oldnick = userdata.nick;
     userdata.nick = nick;
 
+
+    //change nick in each channel
+    for(var i in userdata.channels){
+	var c = userdata.channels[i];
+
+	c.users[nick] = userdata;
+	delete c.users[oldnick] 
+    }
+
+    
     if(clients[oldnick] != undefined){
 	delete clients[oldnick];
     }
