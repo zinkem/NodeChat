@@ -243,7 +243,7 @@ var invite = function(thisuser, params){
 var kick = function(thisuser, params){
 };
 var quit = function(thisuser, params){
-    
+    console.log(thisuser + "has quit");
 
 };
 var nocommand = function(comtype){

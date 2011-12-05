@@ -230,13 +230,23 @@ var part = function(thisuser, params) {
 
 var quit = function(userdata, params){
 
+    var quitmsg;
+
+    if(params == undefined)
+	quitmsg = "disconnected";
+    else
+	quitmsg = params;
+
     for(var i in userdata.channels){
 
+	console.log("join: " + channels[i].name);
 	var u = channels[i].users;
 	delete u[userdata.nick];
 
 	for(var j in userdata.channels[i].users){
-	    userdata.channels[i].users[j].socket.emit('message', ':' + userdata.nick + 'QUIT');
+	    var ud = userdata.channels[i].users[j];
+	    console.log("quit: " + ud.nick);
+	    ud.socket.emit('message', ':' + userdata.nick + ' QUIT ' + quitmsg);
 	}
     }
 
