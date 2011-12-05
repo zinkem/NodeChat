@@ -286,6 +286,8 @@ var joinchan = function(userdata, params){
 	return;
     }
 
+
+
     if(channels[chan] == undefined){
 		//create channel, add user as init operator.
 		channels[chan] = new chanData();
@@ -293,11 +295,13 @@ var joinchan = function(userdata, params){
 		channels[chan].mode.operators[userdata.nick] = userdata;
 		userdata.mode.operatorOf[chan] = channels[chan];
     } else {
+	console.log("join:" + channels[chan].mode.invite_only_chan);
 	if(channels[chan].mode.private_chan ||
 	   channels[chan].mode.invite_only_chan){
 	    //check to see if user is invited, and return if not
-
-	    if(channels[chan].invited[userdata.nick] == false){
+	    console.log("join:" + channels[chan].invited[userdata.nick]);
+	    if(channels[chan].invited[userdata.nick] == false ||
+	       channels[chan].invited[userdata.nick] == undefined){
 		console.log("user not invited");
 		//return error?
 		return;
