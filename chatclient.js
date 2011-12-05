@@ -220,8 +220,9 @@ var part = function(thisuser, params){
     var chatbox = document.getElementById(chan);
 
     if (thisuser.nick == currentnick) {
-        if (inputbox) {
-            document.body.deleteChild(inputbox);
+        chatbox = document.body.getElementById(chan);
+        if (chatbox) {
+            document.body.deleteChild(chatbox);
         }
     } else {
         if (chatbox == undefined) {
