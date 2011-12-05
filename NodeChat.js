@@ -180,6 +180,8 @@ var joinchan = function(userdata, params){
 
     channels[chan].users[userdata.nick] = userdata;
     userdata.channels[chan] = channels[chan];
+    
+    console.log("join: " + userdata.channels.length + " " + chan);
 						
     for(var i in channels[chan].users){
 	var peer = channels[chan].users[i];
@@ -227,6 +229,21 @@ var part = function(thisuser, params) {
 };
 
 var quit = function(userdata, params){
+
+    for(var i in userdata.channels){
+
+	var u = channels[i].users;
+	delete u[userdata.nick];
+
+	for(var j in userdata.channels[i].users){
+	    userdata.channels[i].users[j].socket.emit('message', ':' + userdata.nick + 'QUIT');
+	}
+    }
+
+    delete clients[userdata.nick];
+
+    console.log(userdata.nick + " has quit");
+
 };
 
 var user = function(userdata, params){
@@ -486,7 +503,14 @@ socket.sockets.on('connection', function(client){
 	var address = client.handshake.address; // Get client ip address and port.
 	var thisuser = new userData(address.address, client);
 
+
+	client.on('disconnect', function(data){
+		console.log(thisuser.nick);
+		quit(thisuser);
+	    });
+
 	client.on('data', function(data){
+		console.log(thisuser.nick);
 		console.log(data);
 		var a, fullcommand;
 
@@ -552,12 +576,11 @@ socket.sockets.on('connection', function(client){
 		default:
 		    nocommand(comtype);
 		}
-		
+	
+
+	
 	    });
 	
-	client.on('disconnect', function(data){
-		
-	    });
 	
 	
     });
