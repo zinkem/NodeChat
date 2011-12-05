@@ -180,6 +180,19 @@ var privmsg = function(user, params){
 };
 
 var who = function(thisuser, params){
+    
+    var sysbox = document.getElementById("system");
+    if (!sysbox) {
+        var newDiv = document.createElement("div");
+        var sysText = '<h1>Command response:</h1>';
+        newDiv.id = "system";
+        newDiv.className = "system";
+        document.body.appendChild(newDiv);
+        sysbox = document.getElementById("system");
+    }
+    
+    sysbox.innerHTML = params + "<br/>";
+    
 };
 var nick = function(thisuser, params){
 };

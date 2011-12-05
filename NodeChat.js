@@ -97,22 +97,22 @@ var who = function(thisuser, params) {
     console.log("WHO!");
     var pattern = "";
     var name = "";
-    var i = 0;
+    var i;
     var thatuser;
-    var chanfound = false;
+    var sendmsg = ":" + thisuser.nick + " WHO";
     if (params[0] === '#') {
-        if (channels[params].name == params) {
-            for (i = 0; i < channels[params].users.length; i++) {
+        if (channels[params]) {
+            for (i in channels[params].users) {
                 thatuser = channels[params].users[i];
-                if (!thatuser.mode.invisible) {
+                //if (!clients[thatuser].mode.invisible) {
                     name = thatuser.nick;
                     console.log(name);
-                    thisuser.socket.emit(name + '\n');
-                }
+                    sendmsg += " " + name;
+                //}
             }
         } else {
-            console.log("Channel " + params + " not found!");
-            thisuser.socket.emit("Channel " + params + " not found!\n");
+            console.log("ERROR: Channel " + params + " not found!");
+            sendmsg += " Channel " + params + " not found!\n";
         }
     } else {
         if (params == "" || params == "0") {
@@ -120,16 +120,22 @@ var who = function(thisuser, params) {
         } else {
             pattern = new RegExp(params);
         }
-        for (var i = 0; i < clients.length; i++) {
-            if (!clients[i].mode.invisible) {
+        var foundusers = false;
+        for (i in clients) {
+            //if (!clients[i].mode.invisible) {
                 name = clients[i].nick;
                 if (name.match(pattern)) {
                     console.log(name);
-                    thisuser.socket.emit(name + '\n');
+                    sendmsg += " " + name;
+                    foundusers = true;
                 }
-            }
+            //}
+        }
+        if (!foundusers) {
+            sendmsg += " no users matching pattern " + params;
         }
     }
+    thisuser.socket.emit('message', sendmsg);
 };
 
 
