@@ -52,6 +52,7 @@ function showChat(room){
     sendForm.id = "#" + room;
     sendForm.className = "sendChatBox";
     sendForm.setAttribute("onKeyPress", "checkForSend(this, event)");
+    sendForm.setAttribute("size", "150");
     newDiv.appendChild(sendForm);
     
     document.body.appendChild(newDiv);
@@ -191,7 +192,13 @@ var who = function(thisuser, params){
     sysbox.innerHTML = params + "<br/>";
     
 };
-var nick = function(thisuser, params){
+var nick = function(user, params){
+    console.log(user + " changed nick to " + params);
+
+    if(user == currentnick){
+	currentnick = params;
+    }
+
 };
 var joinchan = function(user, params){
     console.log(user + " & " + params);
