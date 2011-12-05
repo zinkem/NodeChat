@@ -188,6 +188,7 @@ var who = function(thisuser, params){
     sysbox.innerHTML = params + "<br/>";
     
 };
+
 var nick = function(user, params){
     console.log(user + " changed nick to " + params);
 
@@ -220,8 +221,9 @@ var part = function(thisuser, params){
     var chatbox = document.getElementById(chan);
 
     if (thisuser.nick == currentnick) {
-        if (inputbox) {
-            document.body.deleteChild(inputbox);
+        chatbox = document.body.getElementById(chan);
+        if (chatbox) {
+            document.body.deleteChild(chatbox);
         }
     } else {
         if (chatbox == undefined) {
@@ -236,15 +238,30 @@ var part = function(thisuser, params){
 var mode = function(thisuser, params){
 	console.log(params);
 };
+
 var list = function(thisuser, params){
+    
+    var sysbox = document.getElementById("system");
+    if (!sysbox) {
+        var newDiv = document.createElement("div");
+        var sysText = '<h1>Command response:</h1>';
+        newDiv.id = "system";
+        newDiv.className = "system";
+        document.body.appendChild(newDiv);
+        sysbox = document.getElementById("system");
+    }
+    
+    sysbox.innerHTML = params + "<br/>";
+    
 };
+
 var invite = function(thisuser, params){
 	console.log(thisuser.nick+" & "+params);
 };
 var kick = function(thisuser, params){
 };
 var quit = function(thisuser, params){
-    
+    console.log(thisuser + "has quit");
 
 };
 var nocommand = function(comtype){

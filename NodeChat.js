@@ -141,6 +141,29 @@ var who = function(thisuser, params) {
     thisuser.socket.emit('message', sendmsg);
 };
 
+var list = function(thisuser, params) {
+    console.log("LIST!");
+    var i;
+    var sendmsg = ":" + thisuser.nick + " LIST";
+    if (params == undefined) {
+        for (i in channels) {
+            sendmsg += " " + i;
+        }
+    } else {
+        var chans = params.split(','); //channel(s) to list
+        var chan;
+        for (i in chans) {
+            chan = chans[i];
+            if (chan[0] != '#') {
+	        console.log("Invalid channel name: " + chan);
+	        //error to client?
+            } else if (channels[chan]) {
+                sendmsg += " " + chan;
+            }
+        }
+    }
+    thisuser.socket.emit('message', sendmsg);
+};
 
 var nick = function(userdata, nick){
 
@@ -180,6 +203,8 @@ var joinchan = function(userdata, params){
 
     channels[chan].users[userdata.nick] = userdata;
     userdata.channels[chan] = channels[chan];
+    
+    console.log("join: " + userdata.channels.length + " " + chan);
 						
     for(var i in channels[chan].users){
 	var peer = channels[chan].users[i];
@@ -189,7 +214,7 @@ var joinchan = function(userdata, params){
 
 var part = function(thisuser, params) {
     var thisnick = thisuser.nick;
-    var chans = params.split(','); //leaving multiple channels
+    var chans = params.split(','); //channel(s) to leave
     var chan;
     var i;
     for (i in chans) {
@@ -201,22 +226,14 @@ var part = function(thisuser, params) {
 	    return;
         }
 
-        //Below should just be delete thisuser.channels[chan],
-        //but channels is not an associate array!
-        for (i in thisuser.channels) {
-            if (thisuser.channels[i].name == chan) {
-                console.log("Deleting channel " + chan + " from user " + thisnick);
-                delete thisuser.channels[i];
-            }
+        if (thisuser.channels[chan]) {
+            console.log("Deleting channel " + chan + " from user " + thisnick);
+            delete thisuser.channels[chan];
         }
 
-        //Below should just be delete channels[chan].users[thisnick],
-        //but channels is not an associate array!
-        for (i in channels[chan].users) {
-            if (channels[chan].users[i].nick == thisnick) {
-                console.log("Deleting user " + thisnick + " from channel " + chan);
-                delete channels[chan].users[i];
-            }
+        if (channels[chan].users[thisnick]) {
+            console.log("Deleting user " + thisnick + " from channel " + chan);
+            delete channels[chan].users[thisnick];
         }
 
         for (i in channels[chan].users) {
@@ -227,6 +244,31 @@ var part = function(thisuser, params) {
 };
 
 var quit = function(userdata, params){
+
+    var quitmsg;
+
+    if(params == undefined)
+	quitmsg = "disconnected";
+    else
+	quitmsg = params;
+
+    for(var i in userdata.channels){
+
+	console.log("join: " + channels[i].name);
+	var u = channels[i].users;
+	delete u[userdata.nick];
+
+	for(var j in userdata.channels[i].users){
+	    var ud = userdata.channels[i].users[j];
+	    console.log("quit: " + ud.nick);
+	    ud.socket.emit('message', ':' + userdata.nick + ' QUIT ' + quitmsg);
+	}
+    }
+
+    delete clients[userdata.nick];
+
+    console.log(userdata.nick + " has quit");
+
 };
 
 var user = function(userdata, params){
@@ -505,7 +547,14 @@ socket.sockets.on('connection', function(client){
 	var address = client.handshake.address; // Get client ip address and port.
 	var thisuser = new userData(address.address, client);
 
+
+	client.on('disconnect', function(data){
+		console.log(thisuser.nick);
+		quit(thisuser);
+	    });
+
 	client.on('data', function(data){
+		console.log(thisuser.nick);
 		console.log(data);
 		var a, fullcommand;
 
@@ -571,12 +620,11 @@ socket.sockets.on('connection', function(client){
 		default:
 		    nocommand(comtype);
 		}
-		
+	
+
+	
 	    });
 	
-	client.on('disconnect', function(data){
-		
-	    });
 	
 	
     });
