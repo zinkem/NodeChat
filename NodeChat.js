@@ -187,6 +187,31 @@ var joinchan = function(userdata, params){
     }
 };
 
+var part = function(thisuser, params) {
+    var chans = params.split(' ')[0]; //channel name(s) to leave
+
+    for (var chan in chans.split(',')) {
+        console.log("Channel " + chan);
+        if (chan[0] != '#') {
+	    console.log("Invalid channel name: " + chan);
+	    //error to client?
+	    return;
+        }
+
+        if (thisuser.channels[chan]) {
+            delete thisuser.channels[chan];
+        }
+        if (channels[chan].users[thisuser]) {
+            delete channels[chan].users[thisuser];
+        }
+
+        for (var i in channels[chan].users) {
+	    var peer = channels[chan].users[i];
+	    peer.socket.emit('message', ":" + userdata.nick + " PART " + chan);
+        }
+    }
+};
+
 var quit = function(userdata, params){
 };
 
@@ -451,7 +476,7 @@ socket.sockets.on('connection', function(client){
 		    joinchan(thisuser, params);
 		    break;
 		case "PART":
-		    part(thisuser, pararms);
+		    part(thisuser, params);
 		    break;
 		case "MODE":
 		    mode(thisuser, params);

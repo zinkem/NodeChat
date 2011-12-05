@@ -217,6 +217,28 @@ var joinchan = function(user, params){
 
 };
 var part = function(thisuser, pararms){
+    console.log(thisuser + " & " + params);
+    var user = thisuser.slice(1);
+    var chan = params.slice(1);
+    var inputbox = document.getElementById(params);
+    var chatbox = document.getElementById(chan);
+
+    if (thisuser == currentnick) {
+        if (chatbox) {
+            document.removeNamedItem(chatbox);
+        }
+        if (inputbox) {
+            document.removeNamedItem(inputbox);
+        }
+    } else {
+        if (chatbox == undefined) {
+	    showChat(chan);
+        } else {
+	    var newDiv = document.createElement('div');
+	    newDiv.innerHTML = user + " left " + params;
+	    chatbox.insertBefore(newDiv, inputbox);
+        }
+    }
 };
 var mode = function(thisuser, params){
 };
