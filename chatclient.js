@@ -85,6 +85,8 @@ function init(){
     socket.emit('data', "NICK " + currentnick);
 
     //need to wait on a response here... might need to do something special?
+
+	//join default room here?
     
     socket.emit('data', "USER " + currentnick );
 

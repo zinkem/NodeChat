@@ -66,7 +66,7 @@ function channelModeData(){
 }
 
 function userModeData(){
-	this.invisible = []; // Array of channl names user is invisible to?
+	this.invisibleTo = []; // Array of channl names user is invisible to?
 	this.operatorOf = []; // Array of channel names user is operator of?
 	return this; // need these return statements, otherwise nothing is passed back.
 }
@@ -169,13 +169,63 @@ var joinchan = function(userdata, params){
 var quit = function(userdata, params){
 };
 
-var userMode = function(inputArray, params){
-	
+var userMode = function(userdata, inputArray){
+	var userNick = inputArray[0];
+	var userDataWithNick = clients[userNick];
+	if(!userDataWithNick){
+		// Error: No user with given name.
+		console.log("ERROR: Can't find user \""+userNick"\"!");
+	} else {
+		var operation = inputArray[1];
+		var argLength = inputArray.length;
+		var userModes = userDataWithNick.mode;
+		console.log("Found channel \""+channelName+"\"!"); // --- Debugging print.
+		if(operation.length > 2) console.log("This IRC only processes one mode change at a time.");
+		if(operation[0] === '+'){
+			console.log(inputArray); // --- Debugging print.
+			//add
+			switch(operation[1]){
+				case 'o':
+					// Implemented in channel modes.
+					break;
+				case 'w':
+					// Wont be implemented.
+					break;
+				case 's':
+					// Wont be implemented.
+					break;
+				case 'i':
+					//userModes.invisibleTo[<some_channel_name>] = <some_channel>;
+					break;
+				default:
+					// Error: unrecognized option flag.
+					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
+			}
+		} else if(operation[0] === '-'){
+			//subtract
+			switch(operation[1]){
+				case 'o':
+					break;
+				case 'w':
+					break;
+				case 's':
+					break;
+				case 'i':
+					userModes.invite_only_chan = false;
+					break;
+				default:
+					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
+			}
+		} else {
+			//error;
+			console.log("Mode flag must be preceeded by +|-");
+		}
+	}
 };
 
-var chanMode = function(thisuser, inputArray, params){
+var chanMode = function(userdata, inputArray){
 	var channelName = inputArray[0];
-console.log(thisuser.nick);// testing
+console.log(userdata.nick);// testing
 	var channel = channels[channelName];//findChannelWithName(channelName);
 	if(!channel){
 		// Error: No channel with given name.
@@ -196,7 +246,7 @@ console.log(thisuser.nick);// testing
 						// Error: not enough args.
 						console.log("ERROR: Not enough args specified to add an operators.");
 					} else {
-						if(thisuser.nick === inputArray[2]) console.log("You are not allowed to make yourself an operator.");
+						if(userdata.nick === inputArray[2]) console.log("You are not allowed to make yourself an operator.");
 						else {
 							var user = clients[inputArray[2]]//findUserWithNick(inputArray[2]);
 							if(user != null){
@@ -306,6 +356,7 @@ console.log(thisuser.nick);// testing
 					channelModes.open_floor_chan = false;
 					break;
 				case 'k':
+					// some magic yet to be done.
 					break;
 				default:
 					console.log("ERROR: Unrecognized option flag \""+operation[1]+"\" --ignored.");
@@ -321,9 +372,9 @@ var mode = function(thisuser, params){
 	var inputArray = params.split(/\s+/);
 	if(params[0] === '#'){
 		console.log(inputArray[0]);
-		chanMode(thisuser, inputArray, params);
+		chanMode(thisuser, inputArray);
 	} else {
-		userMode(thisuser, inputArray, params);
+		userMode(thisuser, inputArray);
 	}
 };
 
