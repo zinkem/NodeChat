@@ -201,7 +201,9 @@ var list = function(thisuser, params) {
     var sendmsg = ":" + thisuser.nick + " LIST";
     if (params == undefined) {
         for (i in channels) {
-            sendmsg += " " + i;
+            if (!channels[i].mode.secret_chan) {
+                sendmsg += " " + i + ": " + channels[i].topic + "<br>";
+            }
         }
     } else {
         var chans = params.split(','); //channel(s) to list
@@ -211,8 +213,8 @@ var list = function(thisuser, params) {
             if (chan[0] != '#') {
 	        console.log("Invalid channel name: " + chan);
 	        //error to client?
-            } else if (channels[chan]) {
-                sendmsg += " " + chan;
+            } else if (channels[chan] && !(channels[chan].mode.secret_chan)) {
+                sendmsg += " " + chan + ": " + channels[chan].topic + "<br>";
             }
         }
     }
