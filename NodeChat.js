@@ -141,6 +141,29 @@ var who = function(thisuser, params) {
     thisuser.socket.emit('message', sendmsg);
 };
 
+var list = function(thisuser, params) {
+    console.log("LIST!");
+    var i;
+    var sendmsg = ":" + thisuser.nick + " LIST";
+    if (params == undefined) {
+        for (i in channels) {
+            sendmsg += " " + i;
+        }
+    } else {
+        var chans = params.split(','); //channel(s) to list
+        var chan;
+        for (i in chans) {
+            chan = chans[i];
+            if (chan[0] != '#') {
+	        console.log("Invalid channel name: " + chan);
+	        //error to client?
+            } else if (channels[chan]) {
+                sendmsg += " " + chan;
+            }
+        }
+    }
+    thisuser.socket.emit('message', sendmsg);
+};
 
 var nick = function(userdata, nick){
 
@@ -189,7 +212,7 @@ var joinchan = function(userdata, params){
 
 var part = function(thisuser, params) {
     var thisnick = thisuser.nick;
-    var chans = params.split(','); //leaving multiple channels
+    var chans = params.split(','); //channel(s) to leave
     var chan;
     var i;
     for (i in chans) {
@@ -201,22 +224,14 @@ var part = function(thisuser, params) {
 	    return;
         }
 
-        //Below should just be delete thisuser.channels[chan],
-        //but channels is not an associate array!
-        for (i in thisuser.channels) {
-            if (thisuser.channels[i].name == chan) {
-                console.log("Deleting channel " + chan + " from user " + thisnick);
-                delete thisuser.channels[i];
-            }
+        if (thisuser.channels[chan]) {
+            console.log("Deleting channel " + chan + " from user " + thisnick);
+            delete thisuser.channels[chan];
         }
 
-        //Below should just be delete channels[chan].users[thisnick],
-        //but channels is not an associate array!
-        for (i in channels[chan].users) {
-            if (channels[chan].users[i].nick == thisnick) {
-                console.log("Deleting user " + thisnick + " from channel " + chan);
-                delete channels[chan].users[i];
-            }
+        if (channels[chan].users[thisnick]) {
+            console.log("Deleting user " + thisnick + " from channel " + chan);
+            delete channels[chan].users[thisnick];
         }
 
         for (i in channels[chan].users) {
