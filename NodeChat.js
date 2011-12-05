@@ -160,6 +160,7 @@ var nick = function(userdata, nick){
     if(clients[nick] != undefined){
 	console.log("cannot change " + userdata.nick + "'s name to " + nick);
 	console.log("Nick taken");
+	//error to client?
 	return;
     }
 
@@ -179,13 +180,24 @@ var nick = function(userdata, nick){
 var joinchan = function(userdata, params){
     var chan = params.split(' ')[0]; //channel name to join
 
-    if(!channels[chan]){
+    if(chan[0] != '#'){
+	console.log("Invalid channel name: " + chan);
+	//error to client?
+	return;
+    }
+
+    if(channels[chan] == undefined){
 	channels[chan] = new chanData();
 	channels[chan].name = chan;
     }
 
     channels[chan].users.push(userdata);
     userdata.channels.push(channels[chan]);
+
+    for(var i in channels[chan].users){
+	var peer = channels[chan].users[i];
+	peer.socket.emit('message', ":" + userdata.nick + " JOIN " + chan);
+    }
 };
 
 var quit = function(userdata, params){
@@ -372,9 +384,15 @@ socket.sockets.on('connection', function(client){
 		}
 
 		a = fullcommand.indexOf(' '); // find index of next space.
-		var comtype = fullcommand.slice(0, a);
-		var params = fullcommand.slice(a+1, fullcommand.length);
-
+		console.log(a);
+		if(a > 0){
+		    var comtype = fullcommand.slice(0, a);
+		    var params = fullcommand.slice(a+1, fullcommand.length);
+		} else {
+		    var comtype = fullcommand;
+		    var params = undefined;
+		}
+		
 		console.log(params);
 
 		comtype = comtype.toUpperCase();
